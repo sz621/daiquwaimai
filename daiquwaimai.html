@@ -6,54 +6,45 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="代取外卖">
-<meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#07c160">
-<meta name="description" content="公司内部代取外卖小工具">
 <title>代取外卖</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛵</text></svg>">
+
+<!-- 🔴 替换下面的配置为你自己的 Firebase 配置 -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+
 <style>
 :root { color-scheme: light; }
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
-  background: #f2f2f7;
-  color: #1d1d1f;
-  max-width: 430px;
-  margin: 0 auto;
-  min-height: 100vh;
-  min-height: 100dvh;
-  position: relative;
-  overflow-x: hidden;
+  background: #f2f2f7; color: #1d1d1f;
+  max-width: 430px; margin: 0 auto;
+  min-height: 100vh; min-height: 100dvh;
+  position: relative; overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
-  user-select: none;
-  -webkit-user-select: none;
+  user-select: none; -webkit-user-select: none;
 }
 
-/* ========== Header ========== */
+/* Header */
 .header {
-  background: #fff;
-  padding: 12px 20px;
-  padding-top: max(12px, env(safe-area-inset-top));
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: sticky;
-  top: 0;
-  z-index: 100;
+  padding: 12px 20px; padding-top: max(12px, env(safe-area-inset-top));
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
   border-bottom: 0.5px solid #e5e5ea;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
   background: rgba(255,255,255,0.88);
 }
-.header h1 { font-size: 18px; font-weight: 700; color: #1d1d1f; letter-spacing: -0.3px; }
+.header h1 { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
 .header-actions { display: flex; gap: 12px; align-items: center; }
 .icon-btn {
-  background: none; border: none; font-size: 20px;
-  cursor: pointer; position: relative; padding: 6px;
-  border-radius: 50%; transition: background 0.15s;
+  background: none; border: none; font-size: 20px; cursor: pointer;
+  position: relative; padding: 6px; border-radius: 50%;
+  transition: background 0.15s; width: 36px; height: 36px;
   display: flex; align-items: center; justify-content: center;
-  width: 36px; height: 36px;
 }
 .icon-btn:active { background: #f0f0f0; }
 .badge {
@@ -64,16 +55,23 @@ body {
   font-weight: 600; pointer-events: none;
 }
 
-/* ========== Pages ========== */
+/* Connection indicator */
+.conn-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  position: absolute; top: 50%; right: -14px; transform: translateY(-50%);
+}
+.conn-dot.online { background: #07c160; }
+.conn-dot.offline { background: #ff3b30; animation: pulse 1.5s infinite; }
+.conn-dot.connecting { background: #f90; animation: pulse 1s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+/* Pages */
 .page { display: none; padding: 16px; padding-bottom: 90px; animation: fadeIn 0.2s ease; }
 .page.active { display: block; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
-/* ========== Login ========== */
-.login-wrap {
-  display: flex; flex-direction: column; align-items: center;
-  padding: 40px 20px 0;
-}
+/* Login */
+.login-wrap { display: flex; flex-direction: column; align-items: center; padding: 40px 20px 0; }
 .app-icon {
   width: 88px; height: 88px; border-radius: 22px;
   background: linear-gradient(145deg, #07c160, #05a34e);
@@ -102,92 +100,63 @@ body {
 .btn:active { transform: scale(0.975); }
 .btn-primary { background: #07c160; color: #fff; }
 .btn-primary:active { background: #06ad56; }
-.btn-secondary { background: #f2f2f7; color: #07c160; font-weight: 600; }
+.btn-primary:disabled { background: #ccc; cursor: not-allowed; }
+.btn-secondary { background: #f2f2f7; color: #07c160; }
 .btn-secondary:active { background: #e5e5ea; }
 .btn-sm { width: auto; padding: 8px 16px; font-size: 13px; border-radius: 8px; }
 .btn-danger { background: #ff3b30; color: #fff; }
 .btn-danger:active { background: #e0352b; }
 .btn-ghost { background: transparent; color: #8e8e93; width: auto; padding: 8px 12px; }
 
-/* ========== Segment Control ========== */
-.segment {
-  display: flex; background: #e5e5ea; border-radius: 10px; padding: 2px;
-  margin-bottom: 16px;
-}
+/* Segment */
+.segment { display: flex; background: #e5e5ea; border-radius: 10px; padding: 2px; margin-bottom: 16px; }
 .segment-btn {
   flex: 1; padding: 10px 12px; border-radius: 8px;
   font-size: 14px; font-weight: 500; cursor: pointer;
   transition: all 0.2s; color: #6e6e73; border: none;
   background: transparent; text-align: center; white-space: nowrap;
 }
-.segment-btn.active { background: #fff; color: #1d1d1f; font-weight: 600; box-shadow: 0 1px 4px rgba(0,0,0,0.08), 0 0 0 0.5px rgba(0,0,0,0.04); }
+.segment-btn.active { background: #fff; color: #1d1d1f; font-weight: 600; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
 
-/* ========== Task Card ========== */
+/* Task Card */
 .task-card {
   background: #fff; border-radius: 16px; padding: 16px;
   margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
   transition: all 0.15s; border: 0.5px solid #f0f0f0;
-  position: relative; overflow: hidden;
 }
 .task-card:active { transform: scale(0.985); background: #fafafa; }
-.task-top {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 12px;
-}
-.platform-tag {
-  font-size: 12px; padding: 4px 12px; border-radius: 100px; font-weight: 600;
-  display: flex; align-items: center; gap: 4px; letter-spacing: 0.1px;
-}
+.task-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
 .tag-eleme { background: #e8f4fd; color: #0078d4; }
 .tag-meituan { background: #fff3e0; color: #f90; }
-
-.reward-badge {
-  display: flex; align-items: center; gap: 3px;
-  font-size: 15px; font-weight: 700; color: #ff3b30;
+.platform-tag {
+  font-size: 12px; padding: 4px 12px; border-radius: 100px; font-weight: 600;
 }
-.reward-badge img, .reward-badge svg { width: 16px; height: 16px; }
-
-.task-detail {
-  display: grid; grid-template-columns: auto 1fr; gap: 6px 12px;
-  font-size: 14px; line-height: 1.5;
-}
+.reward-badge { display: flex; align-items: center; gap: 3px; font-size: 15px; font-weight: 700; color: #ff3b30; }
+.task-detail { display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; font-size: 14px; line-height: 1.5; }
 .task-label { color: #8e8e93; font-size: 13px; white-space: nowrap; }
 .task-value { color: #1d1d1f; font-weight: 500; word-break: break-all; }
-
-.task-bottom {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-top: 12px; padding-top: 10px; border-top: 0.5px solid #f5f5f5;
-}
+.task-bottom { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; padding-top: 10px; border-top: 0.5px solid #f5f5f5; }
 .task-meta { display: flex; align-items: center; gap: 8px; }
 .task-poster { font-size: 12px; color: #8e8e93; }
 .task-time { font-size: 12px; color: #c7c7cc; }
 
-.action-btn {
-  padding: 8px 20px; border-radius: 100px; font-size: 14px;
-  font-weight: 600; cursor: pointer; border: none;
-  transition: all 0.15s;
-}
+.action-btn { padding: 8px 20px; border-radius: 100px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: all 0.15s; }
 .action-btn:active { transform: scale(0.95); }
 .action-accept { background: #07c160; color: #fff; }
-.action-accept:active { background: #06ad56; }
 .action-complete { background: #007aff; color: #fff; }
-.action-complete:active { background: #0066d6; }
 .action-cancel { background: #f2f2f7; color: #8e8e93; }
-.action-cancel:active { background: #e5e5ea; }
 
-.status-chip {
-  font-size: 11px; padding: 3px 10px; border-radius: 100px; font-weight: 600;
-}
+.status-chip { font-size: 11px; padding: 3px 10px; border-radius: 100px; font-weight: 600; }
 .status-open { background: #e8fce8; color: #07c160; }
 .status-progress { background: #fff3e0; color: #f90; }
 .status-done { background: #f2f2f7; color: #8e8e93; }
 
-/* ========== Post Form ========== */
+/* Form */
 .form-card {
   background: #fff; border-radius: 16px; padding: 20px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.04); border: 0.5px solid #f0f0f0;
 }
-.form-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 20px; letter-spacing: -0.3px; }
+.form-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 20px; }
 .form-card .input-group { margin-bottom: 18px; }
 .form-card select {
   width: 100%; padding: 14px 16px; border: 1.5px solid #e5e5ea;
@@ -197,11 +166,9 @@ body {
   background-repeat: no-repeat; background-position: right 16px center;
   color: #1d1d1f;
 }
-.form-card select:focus { border-color: #07c160; background: #fff; box-shadow: 0 0 0 3px rgba(7,193,96,0.1); }
-.helper { font-size: 12px; color: #8e8e93; margin-top: 4px; display: flex; align-items: center; gap: 4px; }
 .points-available { font-size: 13px; color: #f90; font-weight: 600; }
 
-/* ========== Profile ========== */
+/* Profile */
 .profile-card {
   background: #fff; border-radius: 16px; padding: 28px 20px;
   text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
@@ -211,36 +178,28 @@ body {
   width: 72px; height: 72px; border-radius: 50%;
   background: linear-gradient(145deg, #07c160, #05a34e);
   display: flex; align-items: center; justify-content: center;
-  font-size: 30px; color: #fff; margin: 0 auto 12px;
-  font-weight: 700;
+  font-size: 30px; color: #fff; margin: 0 auto 12px; font-weight: 700;
 }
-.profile-name { font-size: 20px; font-weight: 700; margin-bottom: 2px; letter-spacing: -0.3px; }
+.profile-name { font-size: 20px; font-weight: 700; margin-bottom: 2px; }
 .profile-phone { font-size: 14px; color: #8e8e93; margin-bottom: 18px; }
 .points-box {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 10px 24px; background: #fff9e6; border-radius: 100px;
   font-size: 20px; font-weight: 800; color: #f90;
 }
-.stats {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
-  margin-top: 20px;
-}
-.stat {
-  background: #f9f9f9; border-radius: 12px; padding: 14px 8px;
-}
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; }
+.stat { background: #f9f9f9; border-radius: 12px; padding: 14px 8px; }
 .stat-num { font-size: 22px; font-weight: 700; color: #1d1d1f; }
 .stat-label { font-size: 11px; color: #8e8e93; margin-top: 2px; }
 
-/* ========== Bottom Nav ========== */
+/* Tab Bar */
 .tab-bar {
   position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
   width: 100%; max-width: 430px; background: rgba(255,255,255,0.92);
   display: grid; grid-template-columns: repeat(4, 1fr);
-  border-top: 0.5px solid #e5e5ea;
-  z-index: 100;
+  border-top: 0.5px solid #e5e5ea; z-index: 100;
   padding-bottom: max(4px, env(safe-area-inset-bottom));
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
 }
 .tab-item {
   display: flex; flex-direction: column; align-items: center;
@@ -251,24 +210,22 @@ body {
 .tab-item.active { color: #07c160; }
 .tab-icon { font-size: 22px; line-height: 1; }
 
-/* ========== Toast ========== */
+/* Toast */
 .toast-container {
   position: fixed; top: max(60px, calc(env(safe-area-inset-top) + 60px));
   left: 50%; transform: translateX(-50%); z-index: 9999;
-  display: flex; flex-direction: column; align-items: center;
-  gap: 8px; pointer-events: none;
+  display: flex; flex-direction: column; align-items: center; gap: 8px; pointer-events: none;
 }
 .toast {
   background: rgba(29,29,31,0.9); color: #fff;
   padding: 10px 20px; border-radius: 100px; font-size: 14px;
   font-weight: 500; animation: toastIn 0.3s ease, toastOut 0.3s ease 1.7s forwards;
-  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-  white-space: nowrap; max-width: 90vw;
+  backdrop-filter: blur(10px); white-space: nowrap; max-width: 90vw;
 }
 @keyframes toastIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes toastOut { from { opacity: 1; } to { opacity: 0; } }
 
-/* ========== Modal ========== */
+/* Modal */
 .modal-mask {
   position: fixed; inset: 0; background: rgba(0,0,0,0.4);
   z-index: 500; display: flex; align-items: center; justify-content: center;
@@ -281,20 +238,15 @@ body {
   animation: modalIn 0.25s cubic-bezier(0.21, 1.02, 0.52, 1);
 }
 @keyframes modalIn { from { opacity: 0; transform: scale(0.92) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
-.modal-box h3 { font-size: 17px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.3px; }
+.modal-box h3 { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
 .modal-box p { font-size: 14px; color: #6e6e73; margin-bottom: 20px; line-height: 1.5; }
 .modal-actions { display: flex; gap: 10px; }
 .modal-actions .btn { flex: 1; }
 
-/* ========== Notification Panel ========== */
-.sheet {
-  position: fixed; inset: 0; z-index: 400; pointer-events: none;
-}
+/* Notification */
+.sheet { position: fixed; inset: 0; z-index: 400; pointer-events: none; }
 .sheet.open { pointer-events: auto; }
-.sheet-mask {
-  position: absolute; inset: 0; background: rgba(0,0,0,0.3);
-  opacity: 0; transition: opacity 0.3s;
-}
+.sheet-mask { position: absolute; inset: 0; background: rgba(0,0,0,0.3); opacity: 0; transition: opacity 0.3s; }
 .sheet.open .sheet-mask { opacity: 1; }
 .sheet-body {
   position: absolute; top: 0; right: 0; width: 90%; max-width: 380px;
@@ -305,33 +257,20 @@ body {
 .sheet.open .sheet-body { transform: translateX(0); }
 .sheet-head {
   padding: 16px 20px; padding-top: max(16px, env(safe-area-inset-top));
-  border-bottom: 0.5px solid #e5e5ea;
-  display: flex; align-items: center; justify-content: space-between;
-  flex-shrink: 0;
+  border-bottom: 0.5px solid #e5e5ea; display: flex;
+  align-items: center; justify-content: space-between; flex-shrink: 0;
 }
-.sheet-head h2 { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
-.sheet-close {
-  background: #f2f2f7; border: none; width: 30px; height: 30px;
-  border-radius: 50%; font-size: 16px; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  color: #8e8e93;
-}
+.sheet-head h2 { font-size: 18px; font-weight: 700; }
+.sheet-close { background: #f2f2f7; border: none; width: 30px; height: 30px; border-radius: 50%; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #8e8e93; }
 .sheet-list { flex: 1; overflow-y: auto; padding: 4px 0; }
-.notif-row {
-  padding: 14px 20px; border-bottom: 0.5px solid #f5f5f5;
-  display: flex; gap: 12px; align-items: flex-start;
-}
-.notif-row:active { background: #fafafa; }
+.notif-row { padding: 14px 20px; border-bottom: 0.5px solid #f5f5f5; display: flex; gap: 12px; align-items: flex-start; }
 .notif-dot { width: 8px; height: 8px; border-radius: 50%; background: #07c160; margin-top: 7px; flex-shrink: 0; }
 .notif-dot.seen { background: #e5e5ea; }
 .notif-body { font-size: 14px; color: #1d1d1f; line-height: 1.5; flex: 1; }
 .notif-date { font-size: 12px; color: #c7c7cc; margin-top: 4px; }
 
-/* ========== Empty / Loading ========== */
-.empty {
-  text-align: center; padding: 64px 24px;
-  display: flex; flex-direction: column; align-items: center;
-}
+/* Empty / Loading */
+.empty { text-align: center; padding: 64px 24px; display: flex; flex-direction: column; align-items: center; }
 .empty-icon { font-size: 48px; margin-bottom: 12px; opacity: 0.7; }
 .empty-title { font-size: 17px; font-weight: 600; color: #1d1d1f; margin-bottom: 4px; }
 .empty-desc { font-size: 14px; color: #8e8e93; line-height: 1.5; }
@@ -343,30 +282,10 @@ body {
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ========== Tip Banner ========== */
-.tip-banner {
-  background: #e8fce8; border-radius: 12px; padding: 14px 16px;
-  margin-bottom: 16px; display: flex; align-items: center; gap: 10px;
-  font-size: 13px; color: #1d7a3d; line-height: 1.5;
-  cursor: pointer;
-}
-.tip-banner:active { opacity: 0.8; }
-.tip-icon { font-size: 20px; flex-shrink: 0; }
-.tip-close { margin-left: auto; color: #8e8e93; font-size: 16px; cursor: pointer; flex-shrink: 0; padding: 4px; }
-
-/* ========== Sharing Guide ========== */
+/* Share guide */
 .guide-steps { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
-.guide-step {
-  display: flex; align-items: center; gap: 12px;
-  background: #fff; border-radius: 12px; padding: 14px 16px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-}
-.guide-num {
-  width: 28px; height: 28px; border-radius: 50%;
-  background: #07c160; color: #fff; font-weight: 700;
-  font-size: 14px; display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-}
+.guide-step { display: flex; align-items: center; gap: 12px; background: #fff; border-radius: 12px; padding: 14px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+.guide-num { width: 28px; height: 28px; border-radius: 50%; background: #07c160; color: #fff; font-weight: 700; font-size: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .guide-text { font-size: 14px; color: #1d1d1f; line-height: 1.4; }
 .guide-text small { color: #8e8e93; display: block; margin-top: 2px; font-size: 12px; }
 
@@ -377,28 +296,25 @@ body {
 
 <!-- HEADER -->
 <header class="header">
-  <h1 id="headerTitle">代取外卖</h1>
+  <h1 id="headerTitle">代取外卖 <span class="conn-dot connecting" id="connDot" title="连接状态"></span></h1>
   <div class="header-actions">
-    <button class="icon-btn" onclick="toggleShareGuide()" title="分享给同事">📤</button>
+    <button class="icon-btn" onclick="toggleShareGuide()" title="分享">📤</button>
     <button class="icon-btn" onclick="toggleNotifPanel()" title="消息">
       🔔<span class="badge hidden" id="notifBadge">0</span>
     </button>
   </div>
 </header>
 
-<!-- NOTIFICATION PANEL -->
+<!-- NOTIFICATION -->
 <div class="sheet" id="notifSheet">
   <div class="sheet-mask" onclick="toggleNotifPanel()"></div>
   <div class="sheet-body">
-    <div class="sheet-head">
-      <h2>消息</h2>
-      <button class="sheet-close" onclick="toggleNotifPanel()">✕</button>
-    </div>
+    <div class="sheet-head"><h2>消息</h2><button class="sheet-close" onclick="toggleNotifPanel()">✕</button></div>
     <div class="sheet-list" id="notifList"></div>
   </div>
 </div>
 
-<!-- ============ LOGIN ============ -->
+<!-- LOGIN -->
 <div class="page active" id="loginPage">
   <div class="login-wrap">
     <div class="app-icon">🛵</div>
@@ -408,16 +324,12 @@ body {
     <div class="input-group"><label>手机号</label><input type="tel" id="loginPhone" placeholder="请输入手机号" maxlength="11" autocomplete="tel"></div>
     <button class="btn btn-primary" onclick="handleLogin()" id="loginBtn">登录 / 注册</button>
     <p style="margin-top:14px;font-size:12px;color:#8e8e93;text-align:center;">新用户注册即送 <strong style="color:#f90;">10 积分</strong></p>
+    <p style="margin-top:8px;font-size:11px;color:#ff3b30;text-align:center;line-height:1.4;" id="fbStatus"></p>
   </div>
 </div>
 
-<!-- ============ HOME ============ -->
+<!-- HOME -->
 <div class="page" id="homePage">
-  <div class="tip-banner hidden" id="shareTip">
-    <span class="tip-icon">💡</span>
-    <span>把链接发到公司群，同事就能一起用了。点击查看方法 →</span>
-    <span class="tip-close" onclick="dismissShareTip()">✕</span>
-  </div>
   <div class="segment" id="platformFilter">
     <button class="segment-btn active" onclick="setFilter('all')">全部</button>
     <button class="segment-btn" onclick="setFilter('eleme')">🟦 饿了么</button>
@@ -426,35 +338,20 @@ body {
   <div id="taskList"></div>
 </div>
 
-<!-- ============ POST ============ -->
+<!-- POST -->
 <div class="page" id="postPage">
   <div class="form-card">
     <h3>📦 发布取件任务</h3>
-    <div class="input-group">
-      <label>外卖平台</label>
-      <select id="postPlatform"><option value="eleme">饿了么</option><option value="meituan">美团</option></select>
-    </div>
-    <div class="input-group">
-      <label>柜箱号</label>
-      <input type="text" id="postLocker" placeholder="例如：E-12 或 M-08">
-    </div>
-    <div class="input-group">
-      <label>取件码</label>
-      <input type="text" id="postCode" placeholder="外卖平台发的取件码">
-    </div>
-    <div class="input-group">
-      <label>取件手机号</label>
-      <input type="tel" id="postPhone" placeholder="外卖柜取件用的手机号" maxlength="11">
-    </div>
-    <div class="input-group">
-      <label>悬赏积分 <span class="points-available" id="pointsHint">（可用：0 积分）</span></label>
-      <input type="number" id="postPoints" placeholder="帮取同事将获得这些积分" min="1" value="2">
-    </div>
+    <div class="input-group"><label>外卖平台</label><select id="postPlatform"><option value="eleme">饿了么</option><option value="meituan">美团</option></select></div>
+    <div class="input-group"><label>柜箱号</label><input type="text" id="postLocker" placeholder="例如：E-12 或 M-08"></div>
+    <div class="input-group"><label>取件码</label><input type="text" id="postCode" placeholder="外卖平台发的取件码"></div>
+    <div class="input-group"><label>取件手机号</label><input type="tel" id="postPhone" placeholder="外卖柜取件用的手机号" maxlength="11"></div>
+    <div class="input-group"><label>悬赏积分 <span class="points-available" id="pointsHint">（可用：0）</span></label><input type="number" id="postPoints" placeholder="帮取同事的奖励积分" min="1" value="2"></div>
     <button class="btn btn-primary" onclick="handlePost()" id="postBtn">📢 发布任务</button>
   </div>
 </div>
 
-<!-- ============ MY TASKS ============ -->
+<!-- MY TASKS -->
 <div class="page" id="myPage">
   <div class="segment">
     <button class="segment-btn active" onclick="switchMyTab('posted')">我发布的</button>
@@ -464,13 +361,13 @@ body {
   <div id="myAcceptedList" class="hidden"></div>
 </div>
 
-<!-- ============ PROFILE & SHARE GUIDE ============ -->
+<!-- PROFILE -->
 <div class="page" id="profilePage">
   <div id="profileContent"></div>
   <div id="shareGuide" class="hidden"></div>
 </div>
 
-<!-- ============ TAB BAR ============ -->
+<!-- TAB BAR -->
 <nav class="tab-bar hidden" id="tabBar">
   <button class="tab-item active" onclick="switchPage('home')" data-page="home"><span class="tab-icon">🏠</span>首页</button>
   <button class="tab-item" onclick="switchPage('post')" data-page="post"><span class="tab-icon">➕</span>发布</button>
@@ -484,36 +381,55 @@ body {
 <div id="modalContainer"></div>
 
 <script>
-// ==================== STORE ====================
-const KEY = 'dqw_store_v3';
-let app = (() => {
-  try { const r = localStorage.getItem(KEY); if (r) return JSON.parse(r); } catch(e) {}
-  return { users:[], tasks:[], notifs:[], uid:null, shareTipHidden:false };
-})();
+// ========== FIREBASE CONFIG ==========
+const firebaseConfig = {
+  apiKey: "AIzaSyB2zNmD7NuVI8bLLDSbIKngrhyn2q8BdNc",
+  authDomain: "daiquwaimai.firebaseapp.com",
+  databaseURL: "https://daiquwaimai-default-rtdb.firebaseio.com",
+  projectId: "daiquwaimai",
+  storageBucket: "daiquwaimai.firebasestorage.app",
+  messagingSenderId: "1054207950003",
+  appId: "1:1054207950003:web:c85dcf286ec418613404c6"
+};
 
-// No demo data — clean start
+let db, auth;
+let fbReady = false;
 
-function save() { localStorage.setItem(KEY, JSON.stringify(app)); }
+try {
+  firebase.initializeApp(firebaseConfig);
+  db = firebase.database();
+  auth = firebase.auth();
+  fbReady = true;
+} catch(e) {
+  document.getElementById('fbStatus').textContent = 'Firebase 配置错误：' + e.message;
+}
 
-// ==================== HELPERS ====================
-const uid = () => 'x' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
-const me = () => app.users.find(u => u.id === app.uid);
-const task = id => app.tasks.find(t => t.id === id);
-const user = id => app.users.find(u => u.id === id);
-const ago = ts => {
+// ========== STATE ==========
+let currentUserId = null;
+let currentUser = null;
+let allUsers = {};
+let page = 'home', filter = 'all', myTab = 'posted';
+let showingGuide = false;
+let unreadNotifs = [];
+let taskListener = null;
+let userListener = null;
+
+// ========== HELPERS ==========
+function uid() { return 'x' + Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function ago(ts) {
   const s = (Date.now() - ts) / 1000;
   if (s < 60) return '刚刚';
   if (s < 3600) return Math.floor(s/60) + '分钟前';
   if (s < 86400) return Math.floor(s/3600) + '小时前';
   const d = new Date(ts);
   return `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
-};
-const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
 
 function toast(msg) {
   const el = document.createElement('div'); el.className = 'toast'; el.textContent = msg;
   document.getElementById('toastContainer').appendChild(el);
-  setTimeout(() => el.remove(), 2100);
+  setTimeout(() => el.remove(), 2200);
 }
 
 function modal(title, msg, actions) {
@@ -528,60 +444,154 @@ function modal(title, msg, actions) {
 }
 function closeModal() { document.getElementById('modalContainer').innerHTML = ''; }
 
-function notify(userId, msg) {
-  app.notifs.unshift({ id:uid(), uid:userId, msg, read:false, at:Date.now() });
-  if (app.notifs.length > 60) app.notifs.length = 60;
-  save(); updateBadge();
+function setConnStatus(s) {
+  const dot = document.getElementById('connDot');
+  dot.className = 'conn-dot ' + s;
 }
 
-function platLabel(p) { return p === 'eleme' ? '饿了么' : '美团'; }
-function platCls(p) { return p === 'eleme' ? 'tag-eleme' : 'tag-meituan'; }
-function statusLabel(s) {
-  if (s==='open') return '<span class="status-chip status-open">待接单</span>';
-  if (s==='accepted') return '<span class="status-chip status-progress">进行中</span>';
-  return '<span class="status-chip status-done">已完成</span>';
-}
+// ========== FIREBASE LOGIN & DATA ==========
+async function handleLogin() {
+  if (!fbReady) return toast('系统未就绪，请刷新页面');
 
-// ==================== LOGIN ====================
-function handleLogin() {
   const name = document.getElementById('loginName').value.trim();
   const phone = document.getElementById('loginPhone').value.trim();
   if (!name) return toast('请输入姓名');
   if (!/^\d{11}$/.test(phone)) return toast('请输入正确的11位手机号');
 
-  let u = app.users.find(x => x.phone === phone);
-  const isNew = !u;
-  if (isNew) {
-    u = { id:uid(), name, phone, points:10, at:Date.now() };
-    app.users.push(u);
-    notify(u.id, '🎉 欢迎！已赠送你 10 积分，快去发布第一个任务吧~');
-  } else { u.name = name; }
-  app.uid = u.id; save();
+  const btn = document.getElementById('loginBtn');
+  btn.disabled = true; btn.textContent = '连接中...';
+  setConnStatus('connecting');
 
-  document.getElementById('tabBar').classList.remove('hidden');
-  go('home');
-  toast(isNew ? '注册成功，已送 10 积分！' : '欢迎回来，' + name);
-  refresh();
+  try {
+    // Anonymous auth
+    await auth.signInAnonymously();
+    const firebaseUid = auth.currentUser.uid;
+
+    // Check if phone already exists
+    const usersSnap = await db.ref('users').orderByChild('phone').equalTo(phone).once('value');
+    const users = usersSnap.val();
+    let userData;
+
+    if (users) {
+      // Existing user: update name and firebaseUid
+      const existingKey = Object.keys(users)[0];
+      const existing = users[existingKey];
+      userData = { ...existing, name, lastFirebaseUid: firebaseUid };
+      await db.ref('users/' + existingKey).update(userData);
+      currentUserId = existingKey;
+    } else {
+      // New user
+      const newKey = db.ref('users').push().key;
+      userData = {
+        name, phone, points: 10,
+        createdAt: Date.now(),
+        firebaseUid
+      };
+      await db.ref('users/' + newKey).set(userData);
+      currentUserId = newKey;
+
+      // Welcome notification
+      const notifKey = db.ref('notifications').push().key;
+      await db.ref('notifications/' + notifKey).set({
+        userId: newKey, message: '🎉 欢迎加入代取外卖！已赠送你 10 积分，去发布任务吧~',
+        read: false, createdAt: Date.now()
+      });
+      toast('注册成功，已送 10 积分！');
+    }
+
+    currentUser = userData;
+    localStorage.setItem('dqw_uid', currentUserId);
+
+    // Start real-time listeners
+    startListeners();
+
+    document.getElementById('tabBar').classList.remove('hidden');
+    document.getElementById('homePage').style.paddingBottom = '80px';
+    document.getElementById('postPage').style.paddingBottom = '80px';
+    document.getElementById('myPage').style.paddingBottom = '80px';
+    document.getElementById('profilePage').style.paddingBottom = '80px';
+    go('home');
+    setConnStatus('online');
+    toast(userData.points === 10 && !users ? '注册成功！' : '欢迎回来，' + name);
+  } catch(e) {
+    console.error(e);
+    setConnStatus('offline');
+    document.getElementById('fbStatus').textContent = '连接失败，请检查网络后重试';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '登录 / 注册';
+  }
 }
 
-// ==================== NAV ====================
-let page = 'home', filter = 'all', myTab = 'posted';
+function startListeners() {
+  // Listen for user data changes
+  if (userListener) db.ref('users/' + currentUserId).off('value', userListener);
+  userListener = db.ref('users/' + currentUserId).on('value', snap => {
+    if (snap.val()) currentUser = { id: currentUserId, ...snap.val() };
+    refresh();
+  });
 
+  // Listen for task changes (real-time!)
+  if (taskListener) db.ref('tasks').off('value', taskListener);
+  taskListener = db.ref('tasks').on('value', snap => {
+    if (page === 'home') renderHome();
+    else if (page === 'my') renderMy();
+    else if (page === 'profile') renderProfile();
+  });
+
+  // Listen for notifications
+  db.ref('notifications').orderByChild('userId').equalTo(currentUserId).on('value', snap => {
+    const notifs = snap.val();
+    unreadNotifs = notifs ? Object.values(notifs).filter(n => !n.read) : [];
+    updateBadge();
+  });
+
+  // Connection monitoring
+  db.ref('.info/connected').on('value', snap => {
+    setConnStatus(snap.val() ? 'online' : 'offline');
+  });
+}
+
+// Auto-login
+auth.onAuthStateChanged(async (fbUser) => {
+  const savedUid = localStorage.getItem('dqw_uid');
+  if (fbUser && savedUid) {
+    try {
+      const snap = await db.ref('users/' + savedUid).once('value');
+      if (snap.val()) {
+        currentUserId = savedUid;
+        currentUser = { id: savedUid, ...snap.val() };
+        startListeners();
+        document.getElementById('tabBar').classList.remove('hidden');
+        go('home');
+        setConnStatus('online');
+        return;
+      }
+    } catch(e) {}
+  }
+  // Not logged in
+  document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
+  document.getElementById('loginPage').classList.add('active');
+});
+
+// ========== NAVIGATION ==========
 function go(p) {
-  if (!app.uid && p !== 'login') return toast('请先登录');
+  if (!currentUserId && p !== 'login') return toast('请先登录');
   page = p;
   document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
-  const el = document.getElementById(p + 'Page');
-  if (el) el.classList.add('active');
+  document.getElementById(p + 'Page').classList.add('active');
   document.querySelectorAll('.tab-item').forEach(x => x.classList.remove('active'));
   const t = document.querySelector(`.tab-item[data-page="${p}"]`);
   if (t) t.classList.add('active');
-  document.getElementById('headerTitle').textContent = { home:'代取外卖', post:'发布任务', my:'我的任务', profile:'我的' }[p] || '代取外卖';
+  document.getElementById('headerTitle').innerHTML = ({ home:'代取外卖', post:'发布任务', my:'我的任务', profile:'我的' }[p] || '代取外卖') + ' <span class="conn-dot online" id="connDot" title="连接状态"></span>';
+  const dot = document.getElementById('connDot');
+  if (dot) {
+    db.ref('.info/connected').once('value').then(s => dot.className = 'conn-dot ' + (s.val()?'online':'offline'));
+  }
   renderPage(p);
 }
 
 function switchPage(p) { go(p); }
-
 function refresh() { renderPage(page); updateBadge(); }
 function renderPage(p) {
   if (p === 'home') renderHome();
@@ -590,132 +600,193 @@ function renderPage(p) {
   else if (p === 'profile') renderProfile();
 }
 
-// ==================== HOME ====================
+// ========== HOME ==========
 function setFilter(f) {
   filter = f;
   document.querySelectorAll('#platformFilter .segment-btn').forEach((b,i) => b.classList.toggle('active', i === (f==='all'?0:f==='eleme'?1:2)));
   renderHome();
 }
 
-function renderHome() {
-  const u = me(); if (!u) return;
-  const tip = document.getElementById('shareTip');
-  if (!app.shareTipHidden) tip.classList.remove('hidden'); else tip.classList.add('hidden');
-
-  let tasks = app.tasks.filter(t => t.status === 'open').reverse();
-  if (filter !== 'all') tasks = tasks.filter(t => t.plat === filter);
-
+async function renderHome() {
+  if (!currentUserId) return;
   const c = document.getElementById('taskList');
-  if (!tasks.length) {
-    c.innerHTML = `<div class="empty"><div class="empty-icon">📭</div><div class="empty-title">暂无待取任务</div><div class="empty-desc">点击下方「发布」来发布第一个任务吧</div></div>`;
-    return;
-  }
-  c.innerHTML = tasks.map(t => {
-    const p = user(t.pid);
-    return `<div class="task-card">
-      <div class="task-top">
-        <span class="platform-tag ${platCls(t.plat)}">${t.plat==='eleme'?'🔵':'🟠'} ${platLabel(t.plat)}</span>
-        <span class="reward-badge">🪙 ${t.pts} 积分</span>
-      </div>
-      <div class="task-detail">
-        <span class="task-label">柜箱号</span><span class="task-value">${esc(t.locker)}</span>
-        <span class="task-label">取件码</span><span class="task-value">${esc(t.code)}</span>
-        <span class="task-label">手机号</span><span class="task-value">${esc(t.phone)}</span>
-      </div>
-      <div class="task-bottom">
-        <div class="task-meta">
-          <span class="task-poster">👤 ${p?p.name:'未知'}</span>
-          <span class="task-time">${ago(t.at)}</span>
+  c.innerHTML = '<div class="loading"><div class="spin"></div>加载中...</div>';
+
+  try {
+    const snap = await db.ref('tasks').orderByChild('createdAt').once('value');
+    const tasks = snap.val();
+    let list = tasks ? Object.entries(tasks).map(([id, t]) => ({ id, ...t })) : [];
+    list = list.filter(t => t.status === 'open').sort((a,b) => b.createdAt - a.createdAt);
+    if (filter !== 'all') list = list.filter(t => t.platform === filter);
+
+    if (!list.length) {
+      c.innerHTML = `<div class="empty"><div class="empty-icon">📭</div><div class="empty-title">暂无待取任务</div><div class="empty-desc">点击下方「发布」来发布第一个任务吧</div></div>`;
+      return;
+    }
+
+    c.innerHTML = list.map(t => {
+      const poster = allUsers[t.posterId] || { name: '加载中...' };
+      const platLabel = t.platform === 'eleme' ? '饿了么' : '美团';
+      const platCls = t.platform === 'eleme' ? 'tag-eleme' : 'tag-meituan';
+      return `<div class="task-card">
+        <div class="task-top">
+          <span class="platform-tag ${platCls}">${t.platform==='eleme'?'🔵':'🟠'} ${platLabel}</span>
+          <span class="reward-badge">🪙 ${t.rewardPoints}</span>
         </div>
-        <button class="action-btn action-accept" onclick="accept('${t.id}')">🤝 接单</button>
-      </div></div>`;
-  }).join('');
+        <div class="task-detail">
+          <span class="task-label">柜箱号</span><span class="task-value">${esc(t.lockerNumber)}</span>
+          <span class="task-label">取件码</span><span class="task-value">${esc(t.pickupCode)}</span>
+          <span class="task-label">手机号</span><span class="task-value">${esc(t.phone)}</span>
+        </div>
+        <div class="task-bottom">
+          <div class="task-meta">
+            <span class="task-poster">👤 ${esc(poster.name)}</span>
+            <span class="task-time">${ago(t.createdAt)}</span>
+          </div>
+          <button class="action-btn action-accept" onclick="acceptTask('${t.id}')">🤝 接单</button>
+        </div></div>`;
+    }).join('');
+  } catch(e) {
+    c.innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-title">加载失败</div><div class="empty-desc">请检查网络后刷新页面</div></div>';
+    setConnStatus('offline');
+  }
 }
 
-function dismissShareTip() { app.shareTipHidden = true; save(); document.getElementById('shareTip').classList.add('hidden'); }
-
-// ==================== POST ====================
-function renderPost() {
-  const u = me(); if (!u) return;
-  document.getElementById('pointsHint').textContent = `（可用：${u.points} 积分）`;
+// ========== POST ==========
+async function renderPost() {
+  if (!currentUserId) return;
+  try {
+    const snap = await db.ref('users/' + currentUserId).once('value');
+    const u = snap.val();
+    document.getElementById('pointsHint').textContent = `（可用：${u ? u.points : 0} 积分）`;
+  } catch(e) {}
 }
 
-function handlePost() {
-  const u = me(); if (!u) return;
-  const plat = document.getElementById('postPlatform').value;
-  const locker = document.getElementById('postLocker').value.trim();
-  const code = document.getElementById('postCode').value.trim();
+async function handlePost() {
+  if (!currentUserId) return;
+  const platform = document.getElementById('postPlatform').value;
+  const lockerNumber = document.getElementById('postLocker').value.trim();
+  const pickupCode = document.getElementById('postCode').value.trim();
   const phone = document.getElementById('postPhone').value.trim();
-  const pts = parseInt(document.getElementById('postPoints').value) || 0;
+  const rewardPoints = parseInt(document.getElementById('postPoints').value) || 0;
 
-  if (!locker) return toast('请输入柜箱号');
-  if (!code) return toast('请输入取件码');
-  if (!/^\d{11}$/.test(phone)) return toast('请输入正确的11位手机号');
-  if (pts < 1) return toast('悬赏积分至少为 1');
-  if (pts > u.points) return toast(`积分不足！当前可用 ${u.points} 积分`);
+  if (!lockerNumber) return toast('请输入柜箱号');
+  if (!pickupCode) return toast('请输入取件码');
+  if (!/^\d{11}$/.test(phone)) return toast('请输入正确的手机号');
+  if (rewardPoints < 1) return toast('悬赏积分至少为 1');
 
-  app.tasks.push({ id:uid(), pid:u.id, plat, locker, code, phone, pts, status:'open', aid:null, at:Date.now(), done:null });
-  save();
-  toast('任务发布成功！');
-  ['postLocker','postCode','postPhone'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('postPoints').value = '2';
-  go('home');
+  try {
+    const snap = await db.ref('users/' + currentUserId).once('value');
+    const u = snap.val();
+    if (!u || rewardPoints > u.points) return toast(`积分不足！当前可用 ${u ? u.points : 0} 积分`);
+
+    const key = db.ref('tasks').push().key;
+    await db.ref('tasks/' + key).set({
+      posterId: currentUserId,
+      platform, lockerNumber, pickupCode, phone, rewardPoints,
+      status: 'open', accepterId: null,
+      createdAt: Date.now(), completedAt: null
+    });
+
+    toast('任务发布成功！📢');
+    ['postLocker','postCode','postPhone'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('postPoints').value = '2';
+    go('home');
+  } catch(e) {
+    toast('发布失败，请重试');
+  }
 }
 
-// ==================== ACCEPT / COMPLETE / CANCEL ====================
-function accept(taskId) {
-  const u = me(), t = task(taskId);
-  if (!u || !t) return;
-  if (t.status !== 'open') { toast('该任务已被接取'); return renderHome(); }
-  if (t.pid === u.id) return toast('不能接自己发布的任务哦');
+// ========== ACCEPT / COMPLETE / CANCEL ==========
+async function acceptTask(taskId) {
+  if (!currentUserId) return;
+  try {
+    const snap = await db.ref('tasks/' + taskId).once('value');
+    const t = snap.val();
+    if (!t || t.status !== 'open') { toast('该任务已被接取'); return; }
+    if (t.posterId === currentUserId) return toast('不能接自己发布的任务');
 
-  modal('确认接单',
-    `确认帮取这个外卖？完成后你将获得 <strong style="color:#ff3b30;">${t.pts} 积分</strong><br><br>📦 柜箱号：${t.locker}<br>🔢 取件码：${t.code}<br>📱 手机号：${t.phone}`,
-    [{ text:'取消', cls:'btn-secondary', fn:()=>{} },
-     { text:'确认接单', cls:'btn-primary', fn:()=>{
-       t.status = 'accepted'; t.aid = u.id; save();
-       notify(t.pid, `🤝 ${u.name} 已接取你的外卖任务（${t.locker}）`);
-       notify(u.id, `📋 你已接取 ${user(t.pid)?.name||'同事'} 的外卖任务`);
-       toast('接单成功！快去取吧~');
-       refresh();
-     }}]);
+    modal('确认接单',
+      `确认帮取？完成后获得 <strong style="color:#ff3b30;">${t.rewardPoints} 积分</strong><br><br>📦 ${t.lockerNumber}<br>🔢 ${t.pickupCode}<br>📱 ${t.phone}`,
+      [{ text:'取消', cls:'btn-secondary', fn:()=>{} },
+       { text:'确认接单', cls:'btn-primary', fn: async () => {
+         await db.ref('tasks/' + taskId).update({ status: 'accepted', accepterId: currentUserId });
+         const posterSnap = await db.ref('users/' + currentUserId).once('value');
+         const me = posterSnap.val();
+         const nk = db.ref('notifications').push().key;
+         await db.ref('notifications/' + nk).set({
+           userId: t.posterId, message: `🤝 ${me.name} 已接取你的外卖任务（${t.lockerNumber}）`,
+           read: false, createdAt: Date.now()
+         });
+         toast('接单成功！');
+       }}]);
+  } catch(e) { toast('操作失败'); }
 }
 
-function complete(taskId) {
-  const u = me(), t = task(taskId);
-  if (!u || !t || t.status !== 'accepted' || t.aid !== u.id) return;
+async function completeTask(taskId) {
+  if (!currentUserId) return;
+  try {
+    const snap = await db.ref('tasks/' + taskId).once('value');
+    const t = snap.val();
+    if (!t || t.status !== 'accepted' || t.accepterId !== currentUserId) return;
 
-  modal('确认完成',
-    `确认已帮取并送达？你将获得 <strong style="color:#ff3b30;">${t.pts} 积分</strong>`,
-    [{ text:'再等等', cls:'btn-secondary', fn:()=>{} },
-     { text:'确认完成', cls:'btn-primary', fn:()=>{
-       t.status = 'completed'; t.done = Date.now();
-       const p = user(t.pid); if (p) p.points -= t.pts;
-       u.points += t.pts; save();
-       notify(t.pid, `✅ ${u.name} 已帮你取回外卖（${t.locker}）`);
-       notify(u.id, `🪙 获得 ${t.pts} 积分！外卖已送达`);
-       toast('任务完成，积分已到账！');
-       refresh();
-     }}]);
+    modal('确认完成', `确认已送达？你将获得 <strong style="color:#ff3b30;">${t.rewardPoints} 积分</strong>`,
+      [{ text:'再等等', cls:'btn-secondary', fn:()=>{} },
+       { text:'确认完成', cls:'btn-primary', fn: async () => {
+         // Update task status
+         await db.ref('tasks/' + taskId).update({ status: 'completed', completedAt: Date.now() });
+
+         // Transfer points
+         const posterSnap = await db.ref('users/' + t.posterId).once('value');
+         const accepterSnap = await db.ref('users/' + currentUserId).once('value');
+         const poster = posterSnap.val();
+         const accepter = accepterSnap.val();
+
+         await db.ref('users/' + t.posterId).update({ points: (poster.points || 0) - t.rewardPoints });
+         await db.ref('users/' + currentUserId).update({ points: (accepter.points || 0) + t.rewardPoints });
+
+         // Notify
+         const nk1 = db.ref('notifications').push().key;
+         const nk2 = db.ref('notifications').push().key;
+         await db.ref('notifications/' + nk1).set({
+           userId: t.posterId, message: `✅ ${accepter.name} 已帮你取回外卖（${t.lockerNumber}）`,
+           read: false, createdAt: Date.now()
+         });
+         await db.ref('notifications/' + nk2).set({
+           userId: currentUserId, message: `🪙 获得 ${t.rewardPoints} 积分！外卖已送达`,
+           read: false, createdAt: Date.now()
+         });
+
+         toast('任务完成，积分已到账！');
+       }}]);
+  } catch(e) { toast('操作失败'); }
 }
 
-function cancelTask(taskId) {
-  const u = me(), t = task(taskId);
-  if (!u || !t) return;
-  if (t.pid !== u.id && t.aid !== u.id) return;
-  const isPoster = t.pid === u.id;
+async function cancelTask(taskId) {
+  if (!currentUserId) return;
+  try {
+    const snap = await db.ref('tasks/' + taskId).once('value');
+    const t = snap.val();
+    if (!t || (t.posterId !== currentUserId && t.accepterId !== currentUserId)) return;
 
-  modal('取消任务',
-    isPoster ? '确认取消你发布的这个任务？' : '确认放弃接取这个任务？',
-    [{ text:'再想想', cls:'btn-secondary', fn:()=>{} },
-     { text:'确认取消', cls:'btn-danger', fn:()=>{
-       if (t.status === 'accepted' && t.aid) notify(t.aid, `⚠️ 任务已被取消（${t.locker}）`);
-       t.status = 'cancelled'; save();
-       toast('任务已取消'); refresh();
-     }}]);
+    modal('取消任务',
+      t.posterId === currentUserId ? '确认取消你发布的任务？' : '确认放弃接取？',
+      [{ text:'再想想', cls:'btn-secondary', fn:()=>{} },
+       { text:'确认取消', cls:'btn-danger', fn: async () => {
+         if (t.status === 'accepted' && t.accepterId) {
+           const nk = db.ref('notifications').push().key;
+           await db.ref('notifications/' + nk).set({
+             userId: t.accepterId, message: `⚠️ 任务已被取消（${t.lockerNumber}）`,
+             read: false, createdAt: Date.now()
+           });
+         }
+         await db.ref('tasks/' + taskId).update({ status: 'cancelled' });
+         toast('任务已取消');
+       }}]);
+  } catch(e) { toast('操作失败'); }
 }
 
-// ==================== MY TASKS ====================
+// ========== MY TASKS ==========
 function switchMyTab(tab) {
   myTab = tab;
   document.querySelectorAll('#myPage .segment-btn').forEach((b,i) => b.classList.toggle('active', i === (tab==='posted'?0:1)));
@@ -724,71 +795,98 @@ function switchMyTab(tab) {
   renderMy();
 }
 
-function renderMy() {
-  const u = me(); if (!u) return;
+async function renderMy() {
+  if (!currentUserId) return;
 
-  const posted = app.tasks.filter(t => t.pid === u.id && t.status !== 'cancelled').reverse();
-  document.getElementById('myPostedList').innerHTML = posted.length
-    ? posted.map(t => renderTaskCard(t, 'posted')).join('')
-    : `<div class="empty"><div class="empty-icon">📝</div><div class="empty-title">还没有发布过任务</div><div class="empty-desc">去首页发布第一个取件任务吧</div></div>`;
+  try {
+    const snap = await db.ref('tasks').orderByChild('createdAt').once('value');
+    const tasks = snap.val();
+    const list = tasks ? Object.entries(tasks).map(([id, t]) => ({ id, ...t })).sort((a,b) => b.createdAt - a.createdAt) : [];
 
-  const accepted = app.tasks.filter(t => t.aid === u.id).reverse();
-  document.getElementById('myAcceptedList').innerHTML = accepted.length
-    ? accepted.map(t => renderTaskCard(t, 'accepted')).join('')
-    : `<div class="empty"><div class="empty-icon">🤝</div><div class="empty-title">还没有接取过任务</div><div class="empty-desc">去首页看看有没有同事需要帮忙</div></div>`;
+    const posted = list.filter(t => t.posterId === currentUserId && t.status !== 'cancelled');
+    const accepted = list.filter(t => t.accepterId === currentUserId);
+
+    document.getElementById('myPostedList').innerHTML = posted.length
+      ? posted.map(t => renderTaskCard(t, 'posted')).join('')
+      : '<div class="empty"><div class="empty-icon">📝</div><div class="empty-title">还没有发布过任务</div></div>';
+
+    document.getElementById('myAcceptedList').innerHTML = accepted.length
+      ? accepted.map(t => renderTaskCard(t, 'accepted')).join('')
+      : '<div class="empty"><div class="empty-icon">🤝</div><div class="empty-title">还没有接取过任务</div></div>';
+  } catch(e) {
+    document.getElementById('myPostedList').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-title">加载失败</div></div>';
+  }
 }
 
 function renderTaskCard(t, role) {
-  const p = user(t.pid), a = t.aid ? user(t.aid) : null;
+  const posterName = (allUsers[t.posterId] || {}).name || '未知';
+  const accepterName = (allUsers[t.accepterId] || {}).name || '';
+  const accepterPhone = (allUsers[t.accepterId] || {}).phone || '';
+  const platCls = t.platform === 'eleme' ? 'tag-eleme' : 'tag-meituan';
+  const platLabel = t.platform === 'eleme' ? '饿了么' : '美团';
+
+  let statusHtml = '';
+  if (t.status === 'open') statusHtml = '<span class="status-chip status-open">待接单</span>';
+  else if (t.status === 'accepted') statusHtml = '<span class="status-chip status-progress">进行中</span>';
+  else statusHtml = '<span class="status-chip status-done">已完成</span>';
+
   let actions = '';
   if (role === 'posted' && t.status === 'open') actions = `<button class="action-btn action-cancel" onclick="cancelTask('${t.id}')">取消</button>`;
-  else if (role === 'accepted' && t.status === 'accepted') actions = `<button class="action-btn action-complete" onclick="complete('${t.id}')">✓ 确认完成</button><button class="action-btn action-cancel" style="margin-left:6px;" onclick="cancelTask('${t.id}')">放弃</button>`;
+  else if (role === 'accepted' && t.status === 'accepted') actions = `<button class="action-btn action-complete" onclick="completeTask('${t.id}')">✓ 完成</button><button class="action-btn action-cancel" style="margin-left:6px;" onclick="cancelTask('${t.id}')">放弃</button>`;
 
   return `<div class="task-card">
     <div class="task-top">
-      <span class="platform-tag ${platCls(t.plat)}">${t.plat==='eleme'?'🔵':'🟠'} ${platLabel(t.plat)}</span>
-      ${statusLabel(t.status)}
-      <span class="reward-badge">🪙 ${t.pts}</span>
+      <span class="platform-tag ${platCls}">${t.platform==='eleme'?'🔵':'🟠'} ${platLabel}</span>
+      ${statusHtml}
+      <span class="reward-badge">🪙 ${t.rewardPoints}</span>
     </div>
     <div class="task-detail">
-      <span class="task-label">柜箱号</span><span class="task-value">${esc(t.locker)}</span>
-      <span class="task-label">取件码</span><span class="task-value">${esc(t.code)}</span>
+      <span class="task-label">柜箱号</span><span class="task-value">${esc(t.lockerNumber)}</span>
+      <span class="task-label">取件码</span><span class="task-value">${esc(t.pickupCode)}</span>
       <span class="task-label">手机号</span><span class="task-value">${esc(t.phone)}</span>
-      ${role==='posted'&&a?`<span class="task-label">接单人</span><span class="task-value">${a.name} (${a.phone})</span>`:''}
-      ${role==='accepted'?`<span class="task-label">发布人</span><span class="task-value">${p?p.name:'未知'} (${t.phone})</span>`:''}
+      ${role==='posted'&&t.accepterId?`<span class="task-label">接单人</span><span class="task-value">${esc(accepterName)} (${esc(accepterPhone)})</span>`:''}
+      ${role==='accepted'?`<span class="task-label">发布人</span><span class="task-value">${esc(posterName)} (${esc(t.phone)})</span>`:''}
     </div>
     <div class="task-bottom">
-      <span class="task-time">${ago(t.at)}</span>
+      <span class="task-time">${ago(t.createdAt)}</span>
       <div>${actions}</div>
     </div></div>`;
 }
 
-// ==================== PROFILE ====================
-let showingGuide = false;
+// ========== PROFILE ==========
+async function renderProfile() {
+  if (!currentUserId) return;
+  try {
+    const snap = await db.ref('users/' + currentUserId).once('value');
+    const u = snap.val();
+    if (!u) return;
 
-function renderProfile() {
-  const u = me(); if (!u) return;
-  const pCount = app.tasks.filter(t => t.pid === u.id && t.status !== 'cancelled').length;
-  const aCount = app.tasks.filter(t => t.aid === u.id).length;
-  const cCount = app.tasks.filter(t => t.aid === u.id && t.status === 'completed').length;
+    const tasksSnap = await db.ref('tasks').once('value');
+    const tasks = tasksSnap.val();
+    const list = tasks ? Object.values(tasks) : [];
+    const pCount = list.filter(t => t.posterId === currentUserId && t.status !== 'cancelled').length;
+    const aCount = list.filter(t => t.accepterId === currentUserId).length;
+    const cCount = list.filter(t => t.accepterId === currentUserId && t.status === 'completed').length;
 
-  document.getElementById('profileContent').innerHTML = `
-    <div class="profile-card">
-      <div class="avatar">${u.name.charAt(0)}</div>
-      <div class="profile-name">${esc(u.name)}</div>
-      <div class="profile-phone">${u.phone}</div>
-      <div class="points-box">🪙 ${u.points} 积分</div>
-      <div class="stats">
-        <div class="stat"><div class="stat-num">${pCount}</div><div class="stat-label">发布任务</div></div>
-        <div class="stat"><div class="stat-num">${aCount}</div><div class="stat-label">接取任务</div></div>
-        <div class="stat"><div class="stat-num">${cCount}</div><div class="stat-label">已完成</div></div>
+    document.getElementById('profileContent').innerHTML = `
+      <div class="profile-card">
+        <div class="avatar">${esc(u.name.charAt(0))}</div>
+        <div class="profile-name">${esc(u.name)}</div>
+        <div class="profile-phone">${u.phone}</div>
+        <div class="points-box">🪙 ${u.points} 积分</div>
+        <div class="stats">
+          <div class="stat"><div class="stat-num">${pCount}</div><div class="stat-label">发布任务</div></div>
+          <div class="stat"><div class="stat-num">${aCount}</div><div class="stat-label">接取任务</div></div>
+          <div class="stat"><div class="stat-num">${cCount}</div><div class="stat-label">已完成</div></div>
+        </div>
       </div>
-    </div>
-    <button class="btn btn-secondary" style="margin-bottom:10px;" onclick="toggleShareGuide()">📤 怎么分享给同事</button>
-    <button class="btn btn-secondary" style="margin-bottom:10px;" onclick="handleLogout()">切换账号</button>
-    <button class="btn btn-ghost" style="width:100%;color:#ff3b30;" onclick="resetAll()">重置所有数据</button>`;
+      <button class="btn btn-secondary" style="margin-bottom:10px;" onclick="toggleShareGuide()">📤 怎么分享给同事</button>
+      <button class="btn btn-secondary" style="margin-bottom:10px;" onclick="handleLogout()">切换账号</button>`;
 
-  renderShareGuide();
+    renderShareGuide();
+  } catch(e) {
+    document.getElementById('profileContent').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-title">加载失败</div></div>';
+  }
 }
 
 function toggleShareGuide() {
@@ -800,133 +898,99 @@ function toggleShareGuide() {
 function renderShareGuide() {
   const el = document.getElementById('shareGuide');
   if (!showingGuide) { el.classList.add('hidden'); return; }
-
-  const origin = location.origin;
-  const path = location.pathname;
-  const fullUrl = origin + path;
-
   el.classList.remove('hidden');
+  const url = location.href;
   el.innerHTML = `
-    <div style="background:#fff;border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,0.04);">
+    <div style="background:#fff;border-radius:16px;padding:20px;margin-bottom:16px;">
       <h3 style="font-size:17px;font-weight:700;margin-bottom:6px;">📤 分享给同事</h3>
-      <p style="font-size:13px;color:#8e8e93;margin-bottom:16px;">同事用手机浏览器打开链接就能用，无需安装</p>
+      <p style="font-size:13px;color:#8e8e93;margin-bottom:16px;">同事用手机浏览器打开链接就能用</p>
       <div class="guide-steps">
-        <div class="guide-step">
-          <div class="guide-num">1</div>
-          <div class="guide-text">复制下面的链接<small>点击即可复制</small></div>
-        </div>
-        <div style="background:#f9f9f9;border-radius:10px;padding:12px 14px;word-break:break-all;font-size:13px;color:#007aff;cursor:pointer;" onclick="copyLink()" id="shareLink">${esc(fullUrl)}</div>
-        <div class="guide-step">
-          <div class="guide-num">2</div>
-          <div class="guide-text">发到公司微信群<small>粘贴链接发送即可</small></div>
-        </div>
-        <div class="guide-step">
-          <div class="guide-num">3</div>
-          <div class="guide-text">同事打开后添加到桌面<small>iOS Safari 点分享→添加到主屏幕<br>Android Chrome 点菜单→添加到主屏幕</small></div>
-        </div>
+        <div class="guide-step"><div class="guide-num">1</div><div class="guide-text">复制链接发到公司群</div></div>
+        <div style="background:#f9f9f9;border-radius:10px;padding:12px 14px;word-break:break-all;font-size:13px;color:#007aff;cursor:pointer;" onclick="copyLink()">${esc(url)}</div>
+        <div class="guide-step"><div class="guide-num">2</div><div class="guide-text">同事打开后添加到桌面<small>iOS Safari：分享→添加到主屏幕<br>Android Chrome：菜单→添加到主屏幕</small></div></div>
       </div>
       <button class="btn btn-primary" style="margin-top:12px;" onclick="copyLink()">📋 复制链接</button>
       <p style="text-align:center;font-size:11px;color:#c7c7cc;margin-top:8px;" id="copyStatus"></p>
-    </div>
-    <div style="background:#fff9e6;border-radius:12px;padding:14px 16px;font-size:13px;color:#8e6100;line-height:1.5;">
-      💡 <strong>提示：</strong>如果链接是本地文件（以 file:// 开头），需要先把 HTML 上传到 GitHub Pages 或类似的免费托管服务，才能生成可分享的链接。
     </div>`;
 }
 
 function copyLink() {
-  const url = location.origin + location.pathname;
+  const url = location.href;
   if (navigator.clipboard) {
     navigator.clipboard.writeText(url).then(() => {
-      document.getElementById('copyStatus').textContent = '✅ 链接已复制！';
-      toast('链接已复制到剪贴板');
-    }).catch(() => { document.getElementById('copyStatus').textContent = '复制失败，请手动复制'; });
+      document.getElementById('copyStatus').textContent = '✅ 已复制！';
+      toast('链接已复制');
+    }).catch(() => { document.getElementById('copyStatus').textContent = '请手动复制'; });
   } else {
-    // Fallback
-    const ta = document.createElement('textarea');
-    ta.value = url; ta.style.position = 'fixed'; ta.style.opacity = '0';
-    document.body.appendChild(ta); ta.select();
-    try { document.execCommand('copy'); document.getElementById('copyStatus').textContent = '✅ 链接已复制！'; toast('链接已复制到剪贴板'); }
-    catch(e) { document.getElementById('copyStatus').textContent = '复制失败，请手动复制'; }
-    document.body.removeChild(ta);
+    document.getElementById('copyStatus').textContent = '请手动复制上方链接';
   }
 }
 
 function handleLogout() {
-  modal('切换账号', '确认退出当前账号？数据将保留。',
+  modal('切换账号', '确认退出？数据保留在云端。',
     [{ text:'取消', cls:'btn-secondary', fn:()=>{} },
-     { text:'确认退出', cls:'btn-primary', fn:()=>{
-       app.uid = null; save();
+     { text:'确认退出', cls:'btn-primary', fn: async () => {
+       localStorage.removeItem('dqw_uid');
+       currentUserId = null; currentUser = null;
+       if (taskListener) db.ref('tasks').off('value', taskListener);
+       if (userListener) db.ref('users/' + currentUserId).off('value', userListener);
+       await auth.signOut();
        document.getElementById('tabBar').classList.add('hidden');
-       document.getElementById('loginName').value = '';
-       document.getElementById('loginPhone').value = '';
        document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
        document.getElementById('loginPage').classList.add('active');
-       toast('已退出登录');
+       document.getElementById('loginName').value = '';
+       document.getElementById('loginPhone').value = '';
+       toast('已退出');
      }}]);
 }
 
-function resetAll() {
-  modal('⚠️ 重置数据', '确认清除所有数据吗？此操作不可恢复！',
-    [{ text:'取消', cls:'btn-secondary', fn:()=>{} },
-     { text:'确认重置', cls:'btn-danger', fn:()=>{
-       localStorage.removeItem(KEY); location.reload();
-     }}]);
-}
-
-// ==================== NOTIFICATIONS ====================
+// ========== NOTIFICATIONS ==========
 function toggleNotifPanel() {
   document.getElementById('notifSheet').classList.toggle('open');
   if (document.getElementById('notifSheet').classList.contains('open')) renderNotifs();
 }
 
-function renderNotifs() {
-  const u = me();
+async function renderNotifs() {
   const list = document.getElementById('notifList');
-  if (!u) { list.innerHTML = '<div class="empty"><div class="empty-icon">🔔</div><div class="empty-title">请先登录</div></div>'; return; }
+  if (!currentUserId) { list.innerHTML = '<div class="empty"><div class="empty-icon">🔔</div><div class="empty-title">请先登录</div></div>'; return; }
 
-  const notifs = app.notifs.filter(n => n.uid === u.id);
-  notifs.forEach(n => n.read = true); save(); updateBadge();
+  try {
+    const snap = await db.ref('notifications').orderByChild('userId').equalTo(currentUserId).once('value');
+    const notifs = snap.val();
+    const arr = notifs ? Object.values(notifs).sort((a,b) => b.createdAt - a.createdAt) : [];
 
-  if (!notifs.length) { list.innerHTML = '<div class="empty"><div class="empty-icon">📭</div><div class="empty-title">暂无消息</div></div>'; return; }
+    if (!arr.length) { list.innerHTML = '<div class="empty"><div class="empty-icon">📭</div><div class="empty-title">暂无消息</div></div>'; return; }
 
-  list.innerHTML = notifs.map(n => `
-    <div class="notif-row">
-      <div class="notif-dot seen"></div>
-      <div><div class="notif-body">${n.msg}</div><div class="notif-date">${ago(n.at)}</div></div>
-    </div>`).join('');
+    // Mark all read
+    Object.entries(notifs).forEach(([key, n]) => { if (!n.read) db.ref('notifications/' + key).update({ read: true }); });
+
+    list.innerHTML = arr.map(n => `
+      <div class="notif-row">
+        <div class="notif-dot seen"></div>
+        <div><div class="notif-body">${n.message}</div><div class="notif-date">${ago(n.createdAt)}</div></div>
+      </div>`).join('');
+  } catch(e) {
+    list.innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-title">加载失败</div></div>';
+  }
 }
 
 function updateBadge() {
-  const u = me(), badge = document.getElementById('notifBadge');
-  if (!u) { badge.classList.add('hidden'); return; }
-  const n = app.notifs.filter(x => x.uid === u.id && !x.read).length;
-  if (n > 0) { badge.textContent = n > 99 ? '99+' : n; badge.classList.remove('hidden'); }
-  else badge.classList.add('hidden');
+  const badge = document.getElementById('notifBadge');
+  if (unreadNotifs.length > 0) {
+    badge.textContent = unreadNotifs.length > 99 ? '99+' : unreadNotifs.length;
+    badge.classList.remove('hidden');
+  } else {
+    badge.classList.add('hidden');
+  }
 }
 
-// ==================== INIT ====================
-(function init() {
-  // Generate manifest blob
-  const manifest = {
-    name: '代取外卖', short_name: '代取外卖',
-    start_url: location.href, display: 'standalone',
-    background_color: '#f2f2f7', theme_color: '#07c160',
-    icons: [{ src: "data:image/svg+xml," + encodeURIComponent("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='#07c160'/><text x='50' y='68' text-anchor='middle' font-size='52'>🛵</text></svg>"), sizes: "100x100", type: "image/svg+xml" }]
-  };
-  const blob = new Blob([JSON.stringify(manifest)], { type:'application/json' });
-  const link = document.createElement('link');
-  link.rel = 'manifest'; link.href = URL.createObjectURL(blob);
-  document.head.appendChild(link);
+// ========== LOAD ALL USERS CACHE ==========
+db.ref('users').on('value', snap => {
+  allUsers = snap.val() || {};
+});
 
-  if (app.uid) {
-    document.getElementById('tabBar').classList.remove('hidden');
-    go('home');
-  } else {
-    document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
-    document.getElementById('loginPage').classList.add('active');
-  }
-  updateBadge();
-})();
+// ========== INIT ==========
+setConnStatus('connecting');
 </script>
 </body>
 </html>
