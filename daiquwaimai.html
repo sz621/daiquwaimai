@@ -10,15 +10,9 @@
 <title>代取外卖</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛵</text></svg>">
 
-<!-- 🔴 替换下面的配置为你自己的 Firebase 配置 -->
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-
 <style>
 :root { color-scheme: light; }
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
 body {
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
   background: #f2f2f7; color: #1d1d1f;
@@ -28,8 +22,6 @@ body {
   -webkit-font-smoothing: antialiased;
   user-select: none; -webkit-user-select: none;
 }
-
-/* Header */
 .header {
   padding: 12px 20px; padding-top: max(12px, env(safe-area-inset-top));
   display: flex; align-items: center; justify-content: space-between;
@@ -38,65 +30,23 @@ body {
   backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
   background: rgba(255,255,255,0.88);
 }
-.header h1 { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
+.header h1 { font-size: 18px; font-weight: 700; }
 .header-actions { display: flex; gap: 12px; align-items: center; }
-.icon-btn {
-  background: none; border: none; font-size: 20px; cursor: pointer;
-  position: relative; padding: 6px; border-radius: 50%;
-  transition: background 0.15s; width: 36px; height: 36px;
-  display: flex; align-items: center; justify-content: center;
-}
+.icon-btn { background: none; border: none; font-size: 20px; cursor: pointer; position: relative; padding: 6px; border-radius: 50%; transition: background 0.15s; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; }
 .icon-btn:active { background: #f0f0f0; }
-.badge {
-  position: absolute; top: 2px; right: 2px;
-  background: #ff3b30; color: #fff; font-size: 10px;
-  min-width: 16px; height: 16px; border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  font-weight: 600; pointer-events: none;
-}
-
-/* Connection indicator */
-.conn-dot {
-  width: 8px; height: 8px; border-radius: 50%;
-  position: absolute; top: 50%; right: -14px; transform: translateY(-50%);
-}
-.conn-dot.online { background: #07c160; }
-.conn-dot.offline { background: #ff3b30; animation: pulse 1.5s infinite; }
-.conn-dot.connecting { background: #f90; animation: pulse 1s infinite; }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
-
-/* Pages */
+.badge { position: absolute; top: 2px; right: 2px; background: #ff3b30; color: #fff; font-size: 10px; min-width: 16px; height: 16px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 600; pointer-events: none; }
 .page { display: none; padding: 16px; padding-bottom: 90px; animation: fadeIn 0.2s ease; }
 .page.active { display: block; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
-
-/* Login */
 .login-wrap { display: flex; flex-direction: column; align-items: center; padding: 40px 20px 0; }
-.app-icon {
-  width: 88px; height: 88px; border-radius: 22px;
-  background: linear-gradient(145deg, #07c160, #05a34e);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 44px; margin-bottom: 20px;
-  box-shadow: 0 8px 24px rgba(7,193,96,0.25);
-}
-.app-name { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 4px; }
+.app-icon { width: 88px; height: 88px; border-radius: 22px; background: linear-gradient(145deg, #07c160, #05a34e); display: flex; align-items: center; justify-content: center; font-size: 44px; margin-bottom: 20px; box-shadow: 0 8px 24px rgba(7,193,96,0.25); }
+.app-name { font-size: 26px; font-weight: 800; margin-bottom: 4px; }
 .app-slogan { font-size: 14px; color: #8e8e93; margin-bottom: 36px; }
-
 .input-group { width: 100%; margin-bottom: 14px; }
 .input-group label { display: block; font-size: 13px; color: #6e6e73; margin-bottom: 6px; font-weight: 500; }
-.input-group input {
-  width: 100%; padding: 14px 16px; border: 1.5px solid #e5e5ea;
-  border-radius: 12px; font-size: 16px; outline: none;
-  transition: all 0.2s; background: #f9f9f9; color: #1d1d1f;
-}
+.input-group input { width: 100%; padding: 14px 16px; border: 1.5px solid #e5e5ea; border-radius: 12px; font-size: 16px; outline: none; transition: all 0.2s; background: #f9f9f9; color: #1d1d1f; }
 .input-group input:focus { border-color: #07c160; background: #fff; box-shadow: 0 0 0 3px rgba(7,193,96,0.1); }
-.input-group input::placeholder { color: #c7c7cc; }
-
-.btn {
-  width: 100%; padding: 15px; border: none; border-radius: 12px;
-  font-size: 16px; font-weight: 600; cursor: pointer;
-  transition: all 0.15s; letter-spacing: -0.2px;
-}
+.btn { width: 100%; padding: 15px; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
 .btn:active { transform: scale(0.975); }
 .btn-primary { background: #07c160; color: #fff; }
 .btn-primary:active { background: #06ad56; }
@@ -105,161 +55,69 @@ body {
 .btn-secondary:active { background: #e5e5ea; }
 .btn-sm { width: auto; padding: 8px 16px; font-size: 13px; border-radius: 8px; }
 .btn-danger { background: #ff3b30; color: #fff; }
-.btn-danger:active { background: #e0352b; }
 .btn-ghost { background: transparent; color: #8e8e93; width: auto; padding: 8px 12px; }
-
-/* Segment */
 .segment { display: flex; background: #e5e5ea; border-radius: 10px; padding: 2px; margin-bottom: 16px; }
-.segment-btn {
-  flex: 1; padding: 10px 12px; border-radius: 8px;
-  font-size: 14px; font-weight: 500; cursor: pointer;
-  transition: all 0.2s; color: #6e6e73; border: none;
-  background: transparent; text-align: center; white-space: nowrap;
-}
+.segment-btn { flex: 1; padding: 10px 12px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s; color: #6e6e73; border: none; background: transparent; text-align: center; white-space: nowrap; }
 .segment-btn.active { background: #fff; color: #1d1d1f; font-weight: 600; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
-
-/* Task Card */
-.task-card {
-  background: #fff; border-radius: 16px; padding: 16px;
-  margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-  transition: all 0.15s; border: 0.5px solid #f0f0f0;
-}
+.task-card { background: #fff; border-radius: 16px; padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); transition: all 0.15s; border: 0.5px solid #f0f0f0; }
 .task-card:active { transform: scale(0.985); background: #fafafa; }
 .task-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
 .tag-eleme { background: #e8f4fd; color: #0078d4; }
 .tag-meituan { background: #fff3e0; color: #f90; }
-.platform-tag {
-  font-size: 12px; padding: 4px 12px; border-radius: 100px; font-weight: 600;
-}
+.platform-tag { font-size: 12px; padding: 4px 12px; border-radius: 100px; font-weight: 600; }
 .reward-badge { display: flex; align-items: center; gap: 3px; font-size: 15px; font-weight: 700; color: #ff3b30; }
 .task-detail { display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; font-size: 14px; line-height: 1.5; }
 .task-label { color: #8e8e93; font-size: 13px; white-space: nowrap; }
 .task-value { color: #1d1d1f; font-weight: 500; word-break: break-all; }
 .task-bottom { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; padding-top: 10px; border-top: 0.5px solid #f5f5f5; }
-.task-meta { display: flex; align-items: center; gap: 8px; }
 .task-poster { font-size: 12px; color: #8e8e93; }
 .task-time { font-size: 12px; color: #c7c7cc; }
-
 .action-btn { padding: 8px 20px; border-radius: 100px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: all 0.15s; }
 .action-btn:active { transform: scale(0.95); }
 .action-accept { background: #07c160; color: #fff; }
 .action-complete { background: #007aff; color: #fff; }
 .action-cancel { background: #f2f2f7; color: #8e8e93; }
-
 .status-chip { font-size: 11px; padding: 3px 10px; border-radius: 100px; font-weight: 600; }
 .status-open { background: #e8fce8; color: #07c160; }
 .status-progress { background: #fff3e0; color: #f90; }
 .status-done { background: #f2f2f7; color: #8e8e93; }
-
-/* Form */
-.form-card {
-  background: #fff; border-radius: 16px; padding: 20px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04); border: 0.5px solid #f0f0f0;
-}
+.form-card { background: #fff; border-radius: 16px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); border: 0.5px solid #f0f0f0; }
 .form-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 20px; }
 .form-card .input-group { margin-bottom: 18px; }
-.form-card select {
-  width: 100%; padding: 14px 16px; border: 1.5px solid #e5e5ea;
-  border-radius: 12px; font-size: 16px; outline: none;
-  background: #f9f9f9; appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238e8e93' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat; background-position: right 16px center;
-  color: #1d1d1f;
-}
+.form-card select { width: 100%; padding: 14px 16px; border: 1.5px solid #e5e5ea; border-radius: 12px; font-size: 16px; outline: none; background: #f9f9f9; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238e8e93' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; color: #1d1d1f; }
 .points-available { font-size: 13px; color: #f90; font-weight: 600; }
-
-/* Profile */
-.profile-card {
-  background: #fff; border-radius: 16px; padding: 28px 20px;
-  text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-  margin-bottom: 16px; border: 0.5px solid #f0f0f0;
-}
-.avatar {
-  width: 72px; height: 72px; border-radius: 50%;
-  background: linear-gradient(145deg, #07c160, #05a34e);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 30px; color: #fff; margin: 0 auto 12px; font-weight: 700;
-}
+.profile-card { background: #fff; border-radius: 16px; padding: 28px 20px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.04); margin-bottom: 16px; border: 0.5px solid #f0f0f0; }
+.avatar { width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(145deg, #07c160, #05a34e); display: flex; align-items: center; justify-content: center; font-size: 30px; color: #fff; margin: 0 auto 12px; font-weight: 700; }
 .profile-name { font-size: 20px; font-weight: 700; margin-bottom: 2px; }
 .profile-phone { font-size: 14px; color: #8e8e93; margin-bottom: 18px; }
-.points-box {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 10px 24px; background: #fff9e6; border-radius: 100px;
-  font-size: 20px; font-weight: 800; color: #f90;
-}
+.points-box { display: inline-flex; align-items: center; gap: 6px; padding: 10px 24px; background: #fff9e6; border-radius: 100px; font-size: 20px; font-weight: 800; color: #f90; }
 .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; }
 .stat { background: #f9f9f9; border-radius: 12px; padding: 14px 8px; }
 .stat-num { font-size: 22px; font-weight: 700; color: #1d1d1f; }
 .stat-label { font-size: 11px; color: #8e8e93; margin-top: 2px; }
-
-/* Tab Bar */
-.tab-bar {
-  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
-  width: 100%; max-width: 430px; background: rgba(255,255,255,0.92);
-  display: grid; grid-template-columns: repeat(4, 1fr);
-  border-top: 0.5px solid #e5e5ea; z-index: 100;
-  padding-bottom: max(4px, env(safe-area-inset-bottom));
-  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-}
-.tab-item {
-  display: flex; flex-direction: column; align-items: center;
-  padding: 6px 0 2px; cursor: pointer; border: none;
-  background: none; color: #8e8e93; font-size: 10px;
-  font-weight: 500; transition: color 0.2s; gap: 2px;
-}
+.tab-bar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; background: rgba(255,255,255,0.92); display: grid; grid-template-columns: repeat(4, 1fr); border-top: 0.5px solid #e5e5ea; z-index: 100; padding-bottom: max(4px, env(safe-area-inset-bottom)); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+.tab-item { display: flex; flex-direction: column; align-items: center; padding: 6px 0 2px; cursor: pointer; border: none; background: none; color: #8e8e93; font-size: 10px; font-weight: 500; transition: color 0.2s; gap: 2px; }
 .tab-item.active { color: #07c160; }
 .tab-icon { font-size: 22px; line-height: 1; }
-
-/* Toast */
-.toast-container {
-  position: fixed; top: max(60px, calc(env(safe-area-inset-top) + 60px));
-  left: 50%; transform: translateX(-50%); z-index: 9999;
-  display: flex; flex-direction: column; align-items: center; gap: 8px; pointer-events: none;
-}
-.toast {
-  background: rgba(29,29,31,0.9); color: #fff;
-  padding: 10px 20px; border-radius: 100px; font-size: 14px;
-  font-weight: 500; animation: toastIn 0.3s ease, toastOut 0.3s ease 1.7s forwards;
-  backdrop-filter: blur(10px); white-space: nowrap; max-width: 90vw;
-}
+.toast-container { position: fixed; top: max(60px, calc(env(safe-area-inset-top) + 60px)); left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; align-items: center; gap: 8px; pointer-events: none; }
+.toast { background: rgba(29,29,31,0.9); color: #fff; padding: 10px 20px; border-radius: 100px; font-size: 14px; font-weight: 500; animation: toastIn 0.3s ease, toastOut 0.3s ease 1.7s forwards; backdrop-filter: blur(10px); white-space: nowrap; max-width: 90vw; }
 @keyframes toastIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes toastOut { from { opacity: 1; } to { opacity: 0; } }
-
-/* Modal */
-.modal-mask {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.4);
-  z-index: 500; display: flex; align-items: center; justify-content: center;
-  animation: maskIn 0.2s ease;
-}
+.modal-mask { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 500; display: flex; align-items: center; justify-content: center; animation: maskIn 0.2s ease; }
 @keyframes maskIn { from { opacity: 0; } to { opacity: 1; } }
-.modal-box {
-  background: #fff; border-radius: 20px; padding: 24px;
-  width: calc(100vw - 48px); max-width: 340px;
-  animation: modalIn 0.25s cubic-bezier(0.21, 1.02, 0.52, 1);
-}
+.modal-box { background: #fff; border-radius: 20px; padding: 24px; width: calc(100vw - 48px); max-width: 340px; animation: modalIn 0.25s cubic-bezier(0.21, 1.02, 0.52, 1); }
 @keyframes modalIn { from { opacity: 0; transform: scale(0.92) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
 .modal-box h3 { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
 .modal-box p { font-size: 14px; color: #6e6e73; margin-bottom: 20px; line-height: 1.5; }
 .modal-actions { display: flex; gap: 10px; }
 .modal-actions .btn { flex: 1; }
-
-/* Notification */
 .sheet { position: fixed; inset: 0; z-index: 400; pointer-events: none; }
 .sheet.open { pointer-events: auto; }
 .sheet-mask { position: absolute; inset: 0; background: rgba(0,0,0,0.3); opacity: 0; transition: opacity 0.3s; }
 .sheet.open .sheet-mask { opacity: 1; }
-.sheet-body {
-  position: absolute; top: 0; right: 0; width: 90%; max-width: 380px;
-  height: 100%; background: #fff; transform: translateX(100%);
-  transition: transform 0.3s cubic-bezier(0.21, 1.02, 0.52, 1);
-  display: flex; flex-direction: column;
-}
+.sheet-body { position: absolute; top: 0; right: 0; width: 90%; max-width: 380px; height: 100%; background: #fff; transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.21, 1.02, 0.52, 1); display: flex; flex-direction: column; }
 .sheet.open .sheet-body { transform: translateX(0); }
-.sheet-head {
-  padding: 16px 20px; padding-top: max(16px, env(safe-area-inset-top));
-  border-bottom: 0.5px solid #e5e5ea; display: flex;
-  align-items: center; justify-content: space-between; flex-shrink: 0;
-}
+.sheet-head { padding: 16px 20px; padding-top: max(16px, env(safe-area-inset-top)); border-bottom: 0.5px solid #e5e5ea; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
 .sheet-head h2 { font-size: 18px; font-weight: 700; }
 .sheet-close { background: #f2f2f7; border: none; width: 30px; height: 30px; border-radius: 50%; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #8e8e93; }
 .sheet-list { flex: 1; overflow-y: auto; padding: 4px 0; }
@@ -268,44 +126,30 @@ body {
 .notif-dot.seen { background: #e5e5ea; }
 .notif-body { font-size: 14px; color: #1d1d1f; line-height: 1.5; flex: 1; }
 .notif-date { font-size: 12px; color: #c7c7cc; margin-top: 4px; }
-
-/* Empty / Loading */
 .empty { text-align: center; padding: 64px 24px; display: flex; flex-direction: column; align-items: center; }
 .empty-icon { font-size: 48px; margin-bottom: 12px; opacity: 0.7; }
 .empty-title { font-size: 17px; font-weight: 600; color: #1d1d1f; margin-bottom: 4px; }
 .empty-desc { font-size: 14px; color: #8e8e93; line-height: 1.5; }
 .loading { text-align: center; padding: 48px 20px; }
-.spin {
-  width: 28px; height: 28px; border: 3px solid #e5e5ea;
-  border-top-color: #07c160; border-radius: 50%;
-  animation: spin 0.6s linear infinite; margin: 0 auto 10px;
-}
+.spin { width: 28px; height: 28px; border: 3px solid #e5e5ea; border-top-color: #07c160; border-radius: 50%; animation: spin 0.6s linear infinite; margin: 0 auto 10px; }
 @keyframes spin { to { transform: rotate(360deg); } }
-
-/* Share guide */
 .guide-steps { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
 .guide-step { display: flex; align-items: center; gap: 12px; background: #fff; border-radius: 12px; padding: 14px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
 .guide-num { width: 28px; height: 28px; border-radius: 50%; background: #07c160; color: #fff; font-weight: 700; font-size: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .guide-text { font-size: 14px; color: #1d1d1f; line-height: 1.4; }
-.guide-text small { color: #8e8e93; display: block; margin-top: 2px; font-size: 12px; }
-
 .hidden { display: none !important; }
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <header class="header">
-  <h1 id="headerTitle">代取外卖 <span class="conn-dot connecting" id="connDot" title="连接状态"></span></h1>
+  <h1 id="headerTitle">代取外卖</h1>
   <div class="header-actions">
     <button class="icon-btn" onclick="toggleShareGuide()" title="分享">📤</button>
-    <button class="icon-btn" onclick="toggleNotifPanel()" title="消息">
-      🔔<span class="badge hidden" id="notifBadge">0</span>
-    </button>
+    <button class="icon-btn" onclick="toggleNotifPanel()" title="消息">🔔<span class="badge hidden" id="notifBadge">0</span></button>
   </div>
 </header>
 
-<!-- NOTIFICATION -->
 <div class="sheet" id="notifSheet">
   <div class="sheet-mask" onclick="toggleNotifPanel()"></div>
   <div class="sheet-body">
@@ -324,7 +168,7 @@ body {
     <div class="input-group"><label>手机号</label><input type="tel" id="loginPhone" placeholder="请输入手机号" maxlength="11" autocomplete="tel"></div>
     <button class="btn btn-primary" onclick="handleLogin()" id="loginBtn">登录 / 注册</button>
     <p style="margin-top:14px;font-size:12px;color:#8e8e93;text-align:center;">新用户注册即送 <strong style="color:#f90;">10 积分</strong></p>
-    <p style="margin-top:8px;font-size:11px;color:#ff3b30;text-align:center;line-height:1.4;" id="fbStatus"></p>
+    <p style="margin-top:8px;font-size:11px;color:#ff3b30;text-align:center;" id="statusMsg"></p>
   </div>
 </div>
 
@@ -367,7 +211,6 @@ body {
   <div id="shareGuide" class="hidden"></div>
 </div>
 
-<!-- TAB BAR -->
 <nav class="tab-bar hidden" id="tabBar">
   <button class="tab-item active" onclick="switchPage('home')" data-page="home"><span class="tab-icon">🏠</span>首页</button>
   <button class="tab-item" onclick="switchPage('post')" data-page="post"><span class="tab-icon">➕</span>发布</button>
@@ -375,49 +218,31 @@ body {
   <button class="tab-item" onclick="switchPage('profile')" data-page="profile"><span class="tab-icon">👤</span>我的</button>
 </nav>
 
-<!-- TOAST -->
 <div class="toast-container" id="toastContainer"></div>
-<!-- MODAL -->
 <div id="modalContainer"></div>
 
 <script>
-// ========== FIREBASE CONFIG ==========
-const firebaseConfig = {
-  apiKey: "AIzaSyB2zNmD7NuVI8bLLDSbIKngrhyn2q8BdNc",
-  authDomain: "daiquwaimai.firebaseapp.com",
-  databaseURL: "https://daiquwaimai-default-rtdb.firebaseio.com",
-  projectId: "daiquwaimai",
-  storageBucket: "daiquwaimai.firebasestorage.app",
-  messagingSenderId: "1054207950003",
-  appId: "1:1054207950003:web:c85dcf286ec418613404c6"
-};
+// ========== GITHUB CONFIG ==========
+const REPO = 'sz621/daiquwaimai';
+const DATA_FILE = 'data.json';
+const TOKEN = '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';
 
-let db, auth;
-let fbReady = false;
+const RAW_URL = `https://raw.githubusercontent.com/${REPO}/main/${DATA_FILE}`;
+const API_URL = `https://api.github.com/repos/${REPO}/contents/${DATA_FILE}`;
 
-try {
-  firebase.initializeApp(firebaseConfig);
-  db = firebase.database();
-  auth = firebase.auth();
-  fbReady = true;
-} catch(e) {
-  document.getElementById('fbStatus').textContent = 'Firebase 配置错误：' + e.message;
-}
-
-// ========== STATE ==========
+let dataStore = { users: {}, tasks: {}, notifs: {} };
+let dataSHA = null;
 let currentUserId = null;
-let currentUser = null;
-let allUsers = {};
 let page = 'home', filter = 'all', myTab = 'posted';
 let showingGuide = false;
-let unreadNotifs = [];
-let taskListener = null;
-let userListener = null;
+let pollTimer = null;
+let writeQueue = Promise.resolve();
 
 // ========== HELPERS ==========
-function uid() { return 'x' + Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+function uid() { return 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function ago(ts) {
+  if (!ts) return '';
   const s = (Date.now() - ts) / 1000;
   if (s < 60) return '刚刚';
   if (s < 3600) return Math.floor(s/60) + '分钟前';
@@ -425,13 +250,11 @@ function ago(ts) {
   const d = new Date(ts);
   return `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
 }
-
 function toast(msg) {
   const el = document.createElement('div'); el.className = 'toast'; el.textContent = msg;
   document.getElementById('toastContainer').appendChild(el);
   setTimeout(() => el.remove(), 2200);
 }
-
 function modal(title, msg, actions) {
   document.getElementById('modalContainer').innerHTML = `
     <div class="modal-mask" onclick="closeModal()">
@@ -444,15 +267,87 @@ function modal(title, msg, actions) {
 }
 function closeModal() { document.getElementById('modalContainer').innerHTML = ''; }
 
-function setConnStatus(s) {
-  const dot = document.getElementById('connDot');
-  dot.className = 'conn-dot ' + s;
+// ========== DATA LAYER ==========
+async function loadData() {
+  try {
+    const cacheBuster = '?t=' + Date.now();
+    const resp = await fetch(RAW_URL + cacheBuster);
+    if (!resp.ok) {
+      if (resp.status === 404) {
+        // File doesn't exist yet — start fresh
+        dataStore = { users: {}, tasks: {}, notifs: {} };
+        dataSHA = null;
+        return;
+      }
+      throw new Error('HTTP ' + resp.status);
+    }
+    const text = await resp.text();
+    dataStore = JSON.parse(text);
+    // Get SHA from API for writes
+    try {
+      const apiResp = await fetch(API_URL, { headers: { Authorization: 'Bearer ' + TOKEN } });
+      if (apiResp.ok) {
+        const info = await apiResp.json();
+        dataSHA = info.sha;
+      }
+    } catch(e) {}
+  } catch(e) {
+    console.error('Data load error:', e);
+  }
 }
 
-// ========== FIREBASE LOGIN & DATA ==========
-async function handleLogin() {
-  if (!fbReady) return toast('系统未就绪，请刷新页面');
+async function saveData() {
+  // Serialize and do a sequential write
+  return new Promise((resolve, reject) => {
+    writeQueue = writeQueue.then(async () => {
+      try {
+        const content = JSON.stringify(dataStore, null, 2);
+        const body = {
+          message: 'Update data',
+          content: btoa(unescape(encodeURIComponent(content))),
+          branch: 'main'
+        };
+        if (dataSHA) body.sha = dataSHA;
 
+        const resp = await fetch(API_URL, {
+          method: 'PUT',
+          headers: {
+            Authorization: 'Bearer ' + TOKEN,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(body)
+        });
+
+        if (!resp.ok) {
+          const err = await resp.json();
+          // SHA conflict — reload and retry once
+          if (err.message && err.message.includes('does not match')) {
+            await loadData();
+            body.sha = dataSHA;
+            body.content = btoa(unescape(encodeURIComponent(JSON.stringify(dataStore, null, 2))));
+            const retry = await fetch(API_URL, { method: 'PUT', headers: { Authorization: 'Bearer ' + TOKEN, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+            if (retry.ok) {
+              const info = await retry.json();
+              dataSHA = info.content.sha;
+            }
+          }
+          resolve();
+          return;
+        }
+
+        const info = await resp.json();
+        dataSHA = info.content.sha;
+        resolve();
+      } catch(e) {
+        console.error('Save error:', e);
+        resolve();
+      }
+    });
+  });
+}
+
+// ========== LOGIN ==========
+async function handleLogin() {
   const name = document.getElementById('loginName').value.trim();
   const phone = document.getElementById('loginPhone').value.trim();
   if (!name) return toast('请输入姓名');
@@ -460,135 +355,100 @@ async function handleLogin() {
 
   const btn = document.getElementById('loginBtn');
   btn.disabled = true; btn.textContent = '连接中...';
-  setConnStatus('connecting');
+  document.getElementById('statusMsg').textContent = '';
 
   try {
-    // Anonymous auth
-    await auth.signInAnonymously();
-    const firebaseUid = auth.currentUser.uid;
+    await loadData();
+    if (!dataStore.users) dataStore.users = {};
+    if (!dataStore.tasks) dataStore.tasks = {};
+    if (!dataStore.notifs) dataStore.notifs = {};
 
-    // Check if phone already exists
-    const usersSnap = await db.ref('users').orderByChild('phone').equalTo(phone).once('value');
-    const users = usersSnap.val();
-    let userData;
-
-    if (users) {
-      // Existing user: update name and firebaseUid
-      const existingKey = Object.keys(users)[0];
-      const existing = users[existingKey];
-      userData = { ...existing, name, lastFirebaseUid: firebaseUid };
-      await db.ref('users/' + existingKey).update(userData);
-      currentUserId = existingKey;
-    } else {
-      // New user
-      const newKey = db.ref('users').push().key;
-      userData = {
-        name, phone, points: 10,
-        createdAt: Date.now(),
-        firebaseUid
-      };
-      await db.ref('users/' + newKey).set(userData);
-      currentUserId = newKey;
-
-      // Welcome notification
-      const notifKey = db.ref('notifications').push().key;
-      await db.ref('notifications/' + notifKey).set({
-        userId: newKey, message: '🎉 欢迎加入代取外卖！已赠送你 10 积分，去发布任务吧~',
-        read: false, createdAt: Date.now()
-      });
-      toast('注册成功，已送 10 积分！');
+    // Find or create user
+    let userKey = null;
+    for (const [k, u] of Object.entries(dataStore.users)) {
+      if (u.phone === phone) { userKey = k; break; }
     }
 
-    currentUser = userData;
-    localStorage.setItem('dqw_uid', currentUserId);
+    const isNew = !userKey;
+    if (isNew) {
+      userKey = uid();
+      dataStore.users[userKey] = { name, phone, points: 10, createdAt: Date.now() };
+      // Welcome notification
+      const nk = uid();
+      dataStore.notifs[nk] = { userId: userKey, message: '🎉 欢迎加入代取外卖！已赠送你 10 积分', read: false, createdAt: Date.now() };
+      await saveData();
+      toast('注册成功，已送 10 积分！');
+    } else {
+      dataStore.users[userKey].name = name;
+      await saveData();
+      toast('欢迎回来，' + name);
+    }
 
-    // Start real-time listeners
-    startListeners();
+    currentUserId = userKey;
+    localStorage.setItem('dqw_uid', currentUserId);
 
     document.getElementById('tabBar').classList.remove('hidden');
     document.getElementById('homePage').style.paddingBottom = '80px';
     document.getElementById('postPage').style.paddingBottom = '80px';
     document.getElementById('myPage').style.paddingBottom = '80px';
     document.getElementById('profilePage').style.paddingBottom = '80px';
+
+    startPolling();
     go('home');
-    setConnStatus('online');
-    toast(userData.points === 10 && !users ? '注册成功！' : '欢迎回来，' + name);
   } catch(e) {
     console.error(e);
-    setConnStatus('offline');
-    document.getElementById('fbStatus').textContent = '连接失败，请检查网络后重试';
+    document.getElementById('statusMsg').textContent = '连接失败，请检查网络后重试';
+    toast('连接失败');
   } finally {
     btn.disabled = false;
     btn.textContent = '登录 / 注册';
   }
 }
 
-function startListeners() {
-  // Listen for user data changes
-  if (userListener) db.ref('users/' + currentUserId).off('value', userListener);
-  userListener = db.ref('users/' + currentUserId).on('value', snap => {
-    if (snap.val()) currentUser = { id: currentUserId, ...snap.val() };
-    refresh();
-  });
-
-  // Listen for task changes (real-time!)
-  if (taskListener) db.ref('tasks').off('value', taskListener);
-  taskListener = db.ref('tasks').on('value', snap => {
-    if (page === 'home') renderHome();
-    else if (page === 'my') renderMy();
-    else if (page === 'profile') renderProfile();
-  });
-
-  // Listen for notifications
-  db.ref('notifications').orderByChild('userId').equalTo(currentUserId).on('value', snap => {
-    const notifs = snap.val();
-    unreadNotifs = notifs ? Object.values(notifs).filter(n => !n.read) : [];
-    updateBadge();
-  });
-
-  // Connection monitoring
-  db.ref('.info/connected').on('value', snap => {
-    setConnStatus(snap.val() ? 'online' : 'offline');
-  });
-}
-
 // Auto-login
-auth.onAuthStateChanged(async (fbUser) => {
-  const savedUid = localStorage.getItem('dqw_uid');
-  if (fbUser && savedUid) {
+(async function() {
+  const saved = localStorage.getItem('dqw_uid');
+  if (saved) {
     try {
-      const snap = await db.ref('users/' + savedUid).once('value');
-      if (snap.val()) {
-        currentUserId = savedUid;
-        currentUser = { id: savedUid, ...snap.val() };
-        startListeners();
+      await loadData();
+      if (dataStore.users && dataStore.users[saved]) {
+        currentUserId = saved;
         document.getElementById('tabBar').classList.remove('hidden');
+        document.getElementById('homePage').style.paddingBottom = '80px';
+        document.getElementById('postPage').style.paddingBottom = '80px';
+        document.getElementById('myPage').style.paddingBottom = '80px';
+        document.getElementById('profilePage').style.paddingBottom = '80px';
+        startPolling();
         go('home');
-        setConnStatus('online');
-        return;
+      } else {
+        localStorage.removeItem('dqw_uid');
       }
     } catch(e) {}
   }
-  // Not logged in
-  document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
-  document.getElementById('loginPage').classList.add('active');
-});
+})();
+
+function startPolling() {
+  if (pollTimer) clearInterval(pollTimer);
+  pollTimer = setInterval(async () => {
+    try {
+      const prev = JSON.stringify(dataStore);
+      await loadData();
+      if (JSON.stringify(dataStore) !== prev) refresh();
+    } catch(e) {}
+  }, 3000);
+}
 
 // ========== NAVIGATION ==========
 function go(p) {
-  if (!currentUserId && p !== 'login') return toast('请先登录');
+  if (!currentUserId) return toast('请先登录');
   page = p;
   document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
-  document.getElementById(p + 'Page').classList.add('active');
+  const el = document.getElementById(p + 'Page');
+  if (el) el.classList.add('active');
   document.querySelectorAll('.tab-item').forEach(x => x.classList.remove('active'));
   const t = document.querySelector(`.tab-item[data-page="${p}"]`);
   if (t) t.classList.add('active');
-  document.getElementById('headerTitle').innerHTML = ({ home:'代取外卖', post:'发布任务', my:'我的任务', profile:'我的' }[p] || '代取外卖') + ' <span class="conn-dot online" id="connDot" title="连接状态"></span>';
-  const dot = document.getElementById('connDot');
-  if (dot) {
-    db.ref('.info/connected').once('value').then(s => dot.className = 'conn-dot ' + (s.val()?'online':'offline'));
-  }
-  renderPage(p);
+  refresh();
 }
 
 function switchPage(p) { go(p); }
@@ -607,59 +467,48 @@ function setFilter(f) {
   renderHome();
 }
 
-async function renderHome() {
+function renderHome() {
   if (!currentUserId) return;
   const c = document.getElementById('taskList');
-  c.innerHTML = '<div class="loading"><div class="spin"></div>加载中...</div>';
+  const users = dataStore.users || {};
+  let tasks = Object.entries(dataStore.tasks || {})
+    .map(([id, t]) => ({ id, ...t }))
+    .filter(t => t.status === 'open')
+    .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
 
-  try {
-    const snap = await db.ref('tasks').orderByChild('createdAt').once('value');
-    const tasks = snap.val();
-    let list = tasks ? Object.entries(tasks).map(([id, t]) => ({ id, ...t })) : [];
-    list = list.filter(t => t.status === 'open').sort((a,b) => b.createdAt - a.createdAt);
-    if (filter !== 'all') list = list.filter(t => t.platform === filter);
+  if (filter !== 'all') tasks = tasks.filter(t => t.platform === filter);
 
-    if (!list.length) {
-      c.innerHTML = `<div class="empty"><div class="empty-icon">📭</div><div class="empty-title">暂无待取任务</div><div class="empty-desc">点击下方「发布」来发布第一个任务吧</div></div>`;
-      return;
-    }
-
-    c.innerHTML = list.map(t => {
-      const poster = allUsers[t.posterId] || { name: '加载中...' };
-      const platLabel = t.platform === 'eleme' ? '饿了么' : '美团';
-      const platCls = t.platform === 'eleme' ? 'tag-eleme' : 'tag-meituan';
-      return `<div class="task-card">
-        <div class="task-top">
-          <span class="platform-tag ${platCls}">${t.platform==='eleme'?'🔵':'🟠'} ${platLabel}</span>
-          <span class="reward-badge">🪙 ${t.rewardPoints}</span>
-        </div>
-        <div class="task-detail">
-          <span class="task-label">柜箱号</span><span class="task-value">${esc(t.lockerNumber)}</span>
-          <span class="task-label">取件码</span><span class="task-value">${esc(t.pickupCode)}</span>
-          <span class="task-label">手机号</span><span class="task-value">${esc(t.phone)}</span>
-        </div>
-        <div class="task-bottom">
-          <div class="task-meta">
-            <span class="task-poster">👤 ${esc(poster.name)}</span>
-            <span class="task-time">${ago(t.createdAt)}</span>
-          </div>
-          <button class="action-btn action-accept" onclick="acceptTask('${t.id}')">🤝 接单</button>
-        </div></div>`;
-    }).join('');
-  } catch(e) {
-    c.innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-title">加载失败</div><div class="empty-desc">请检查网络后刷新页面</div></div>';
-    setConnStatus('offline');
+  if (!tasks.length) {
+    c.innerHTML = '<div class="empty"><div class="empty-icon">📭</div><div class="empty-title">暂无待取任务</div><div class="empty-desc">点击下方「发布」来发布第一个任务吧</div></div>';
+    return;
   }
+
+  c.innerHTML = tasks.map(t => {
+    const poster = users[t.posterId] || {};
+    const platCls = t.platform === 'eleme' ? 'tag-eleme' : 'tag-meituan';
+    return `<div class="task-card">
+      <div class="task-top">
+        <span class="platform-tag ${platCls}">${t.platform==='eleme'?'🔵':'🟠'} ${t.platform==='eleme'?'饿了么':'美团'}</span>
+        <span class="reward-badge">🪙 ${t.rewardPoints}</span>
+      </div>
+      <div class="task-detail">
+        <span class="task-label">柜箱号</span><span class="task-value">${esc(t.lockerNumber)}</span>
+        <span class="task-label">取件码</span><span class="task-value">${esc(t.pickupCode)}</span>
+        <span class="task-label">手机号</span><span class="task-value">${esc(t.phone)}</span>
+      </div>
+      <div class="task-bottom">
+        <span class="task-poster">👤 ${esc(poster.name||'...')}</span>
+        <span class="task-time">${ago(t.createdAt)}</span>
+        <button class="action-btn action-accept" onclick="acceptTask('${t.id}')">🤝 接单</button>
+      </div></div>`;
+  }).join('');
 }
 
 // ========== POST ==========
-async function renderPost() {
+function renderPost() {
   if (!currentUserId) return;
-  try {
-    const snap = await db.ref('users/' + currentUserId).once('value');
-    const u = snap.val();
-    document.getElementById('pointsHint').textContent = `（可用：${u ? u.points : 0} 积分）`;
-  } catch(e) {}
+  const u = (dataStore.users || {})[currentUserId];
+  document.getElementById('pointsHint').textContent = `（可用：${u ? u.points : 0} 积分）`;
 }
 
 async function handlePost() {
@@ -675,115 +524,96 @@ async function handlePost() {
   if (!/^\d{11}$/.test(phone)) return toast('请输入正确的手机号');
   if (rewardPoints < 1) return toast('悬赏积分至少为 1');
 
-  try {
-    const snap = await db.ref('users/' + currentUserId).once('value');
-    const u = snap.val();
-    if (!u || rewardPoints > u.points) return toast(`积分不足！当前可用 ${u ? u.points : 0} 积分`);
+  const u = (dataStore.users || {})[currentUserId];
+  if (!u || rewardPoints > u.points) return toast(`积分不足！当前可用 ${u ? u.points : 0} 积分`);
 
-    const key = db.ref('tasks').push().key;
-    await db.ref('tasks/' + key).set({
-      posterId: currentUserId,
-      platform, lockerNumber, pickupCode, phone, rewardPoints,
-      status: 'open', accepterId: null,
-      createdAt: Date.now(), completedAt: null
-    });
-
-    toast('任务发布成功！📢');
-    ['postLocker','postCode','postPhone'].forEach(id => document.getElementById(id).value = '');
-    document.getElementById('postPoints').value = '2';
-    go('home');
-  } catch(e) {
-    toast('发布失败，请重试');
-  }
+  const taskId = uid();
+  if (!dataStore.tasks) dataStore.tasks = {};
+  dataStore.tasks[taskId] = {
+    posterId: currentUserId, platform, lockerNumber, pickupCode, phone,
+    rewardPoints, status: 'open', accepterId: null, createdAt: Date.now()
+  };
+  await saveData();
+  toast('任务发布成功！📢');
+  ['postLocker','postCode','postPhone'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('postPoints').value = '2';
+  go('home');
 }
 
 // ========== ACCEPT / COMPLETE / CANCEL ==========
 async function acceptTask(taskId) {
   if (!currentUserId) return;
-  try {
-    const snap = await db.ref('tasks/' + taskId).once('value');
-    const t = snap.val();
-    if (!t || t.status !== 'open') { toast('该任务已被接取'); return; }
-    if (t.posterId === currentUserId) return toast('不能接自己发布的任务');
+  const t = (dataStore.tasks || {})[taskId];
+  if (!t || t.status !== 'open') { toast('该任务已被接取'); return refresh(); }
+  if (t.posterId === currentUserId) return toast('不能接自己发布的任务');
 
-    modal('确认接单',
-      `确认帮取？完成后获得 <strong style="color:#ff3b30;">${t.rewardPoints} 积分</strong><br><br>📦 ${t.lockerNumber}<br>🔢 ${t.pickupCode}<br>📱 ${t.phone}`,
-      [{ text:'取消', cls:'btn-secondary', fn:()=>{} },
-       { text:'确认接单', cls:'btn-primary', fn: async () => {
-         await db.ref('tasks/' + taskId).update({ status: 'accepted', accepterId: currentUserId });
-         const posterSnap = await db.ref('users/' + currentUserId).once('value');
-         const me = posterSnap.val();
-         const nk = db.ref('notifications').push().key;
-         await db.ref('notifications/' + nk).set({
-           userId: t.posterId, message: `🤝 ${me.name} 已接取你的外卖任务（${t.lockerNumber}）`,
-           read: false, createdAt: Date.now()
-         });
-         toast('接单成功！');
-       }}]);
-  } catch(e) { toast('操作失败'); }
+  modal('确认接单',
+    `确认帮取？完成后获得 <strong style="color:#ff3b30;">${t.rewardPoints} 积分</strong><br><br>📦 ${t.lockerNumber}<br>🔢 ${t.pickupCode}`,
+    [{ text:'取消', cls:'btn-secondary', fn:()=>{} },
+     { text:'确认接单', cls:'btn-primary', fn: async () => {
+       await loadData(); // Refresh before writing
+       const task = (dataStore.tasks || {})[taskId];
+       if (!task || task.status !== 'open') return toast('任务已被接走');
+       task.status = 'accepted'; task.accepterId = currentUserId;
+       const me = dataStore.users[currentUserId];
+       const nk = uid();
+       if (!dataStore.notifs) dataStore.notifs = {};
+       dataStore.notifs[nk] = { userId: task.posterId, message: `🤝 ${me.name} 已接取你的外卖任务（${task.lockerNumber}）`, read: false, createdAt: Date.now() };
+       await saveData();
+       toast('接单成功！'); refresh();
+     }}]);
 }
 
 async function completeTask(taskId) {
   if (!currentUserId) return;
-  try {
-    const snap = await db.ref('tasks/' + taskId).once('value');
-    const t = snap.val();
-    if (!t || t.status !== 'accepted' || t.accepterId !== currentUserId) return;
+  await loadData();
+  const t = (dataStore.tasks || {})[taskId];
+  if (!t || t.status !== 'accepted' || t.accepterId !== currentUserId) return;
 
-    modal('确认完成', `确认已送达？你将获得 <strong style="color:#ff3b30;">${t.rewardPoints} 积分</strong>`,
-      [{ text:'再等等', cls:'btn-secondary', fn:()=>{} },
-       { text:'确认完成', cls:'btn-primary', fn: async () => {
-         // Update task status
-         await db.ref('tasks/' + taskId).update({ status: 'completed', completedAt: Date.now() });
+  modal('确认完成', `确认已送达？获得 <strong style="color:#ff3b30;">${t.rewardPoints} 积分</strong>`,
+    [{ text:'再等等', cls:'btn-secondary', fn:()=>{} },
+     { text:'确认完成', cls:'btn-primary', fn: async () => {
+       await loadData();
+       const task = (dataStore.tasks || {})[taskId];
+       if (!task || task.status !== 'accepted') return;
+       task.status = 'completed'; task.completedAt = Date.now();
 
-         // Transfer points
-         const posterSnap = await db.ref('users/' + t.posterId).once('value');
-         const accepterSnap = await db.ref('users/' + currentUserId).once('value');
-         const poster = posterSnap.val();
-         const accepter = accepterSnap.val();
+       const poster = dataStore.users[task.posterId];
+       const accepter = dataStore.users[currentUserId];
+       if (poster) poster.points = (poster.points || 0) - task.rewardPoints;
+       if (accepter) accepter.points = (accepter.points || 0) + task.rewardPoints;
 
-         await db.ref('users/' + t.posterId).update({ points: (poster.points || 0) - t.rewardPoints });
-         await db.ref('users/' + currentUserId).update({ points: (accepter.points || 0) + t.rewardPoints });
-
-         // Notify
-         const nk1 = db.ref('notifications').push().key;
-         const nk2 = db.ref('notifications').push().key;
-         await db.ref('notifications/' + nk1).set({
-           userId: t.posterId, message: `✅ ${accepter.name} 已帮你取回外卖（${t.lockerNumber}）`,
-           read: false, createdAt: Date.now()
-         });
-         await db.ref('notifications/' + nk2).set({
-           userId: currentUserId, message: `🪙 获得 ${t.rewardPoints} 积分！外卖已送达`,
-           read: false, createdAt: Date.now()
-         });
-
-         toast('任务完成，积分已到账！');
-       }}]);
-  } catch(e) { toast('操作失败'); }
+       if (!dataStore.notifs) dataStore.notifs = {};
+       const nk1 = uid(); const nk2 = uid();
+       dataStore.notifs[nk1] = { userId: task.posterId, message: `✅ ${accepter.name} 已帮你取回外卖（${task.lockerNumber}）`, read: false, createdAt: Date.now() };
+       dataStore.notifs[nk2] = { userId: currentUserId, message: `🪙 获得 ${task.rewardPoints} 积分！外卖已送达`, read: false, createdAt: Date.now() };
+       await saveData();
+       toast('任务完成，积分已到账！'); refresh();
+     }}]);
 }
 
 async function cancelTask(taskId) {
   if (!currentUserId) return;
-  try {
-    const snap = await db.ref('tasks/' + taskId).once('value');
-    const t = snap.val();
-    if (!t || (t.posterId !== currentUserId && t.accepterId !== currentUserId)) return;
+  await loadData();
+  const t = (dataStore.tasks || {})[taskId];
+  if (!t || (t.posterId !== currentUserId && t.accepterId !== currentUserId)) return;
 
-    modal('取消任务',
-      t.posterId === currentUserId ? '确认取消你发布的任务？' : '确认放弃接取？',
-      [{ text:'再想想', cls:'btn-secondary', fn:()=>{} },
-       { text:'确认取消', cls:'btn-danger', fn: async () => {
-         if (t.status === 'accepted' && t.accepterId) {
-           const nk = db.ref('notifications').push().key;
-           await db.ref('notifications/' + nk).set({
-             userId: t.accepterId, message: `⚠️ 任务已被取消（${t.lockerNumber}）`,
-             read: false, createdAt: Date.now()
-           });
-         }
-         await db.ref('tasks/' + taskId).update({ status: 'cancelled' });
-         toast('任务已取消');
-       }}]);
-  } catch(e) { toast('操作失败'); }
+  modal('取消任务',
+    t.posterId === currentUserId ? '确认取消你发布的任务？' : '确认放弃接取？',
+    [{ text:'再想想', cls:'btn-secondary', fn:()=>{} },
+     { text:'确认取消', cls:'btn-danger', fn: async () => {
+       await loadData();
+       const task = (dataStore.tasks || {})[taskId];
+       if (!task) return;
+       if (task.accepterId) {
+         if (!dataStore.notifs) dataStore.notifs = {};
+         const nk = uid();
+         dataStore.notifs[nk] = { userId: task.accepterId, message: `⚠️ 任务已被取消（${task.lockerNumber}）`, read: false, createdAt: Date.now() };
+       }
+       task.status = 'cancelled';
+       await saveData();
+       toast('任务已取消'); refresh();
+     }}]);
 }
 
 // ========== MY TASKS ==========
@@ -795,40 +625,31 @@ function switchMyTab(tab) {
   renderMy();
 }
 
-async function renderMy() {
+function renderMy() {
   if (!currentUserId) return;
+  const users = dataStore.users || {};
+  const tasks = Object.entries(dataStore.tasks || {}).map(([id, t]) => ({ id, ...t })).sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
 
-  try {
-    const snap = await db.ref('tasks').orderByChild('createdAt').once('value');
-    const tasks = snap.val();
-    const list = tasks ? Object.entries(tasks).map(([id, t]) => ({ id, ...t })).sort((a,b) => b.createdAt - a.createdAt) : [];
+  const posted = tasks.filter(t => t.posterId === currentUserId && t.status !== 'cancelled');
+  const accepted = tasks.filter(t => t.accepterId === currentUserId);
 
-    const posted = list.filter(t => t.posterId === currentUserId && t.status !== 'cancelled');
-    const accepted = list.filter(t => t.accepterId === currentUserId);
+  document.getElementById('myPostedList').innerHTML = posted.length
+    ? posted.map(t => renderTaskCard(t, 'posted', users)).join('')
+    : '<div class="empty"><div class="empty-icon">📝</div><div class="empty-title">还没有发布过任务</div></div>';
 
-    document.getElementById('myPostedList').innerHTML = posted.length
-      ? posted.map(t => renderTaskCard(t, 'posted')).join('')
-      : '<div class="empty"><div class="empty-icon">📝</div><div class="empty-title">还没有发布过任务</div></div>';
-
-    document.getElementById('myAcceptedList').innerHTML = accepted.length
-      ? accepted.map(t => renderTaskCard(t, 'accepted')).join('')
-      : '<div class="empty"><div class="empty-icon">🤝</div><div class="empty-title">还没有接取过任务</div></div>';
-  } catch(e) {
-    document.getElementById('myPostedList').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-title">加载失败</div></div>';
-  }
+  document.getElementById('myAcceptedList').innerHTML = accepted.length
+    ? accepted.map(t => renderTaskCard(t, 'accepted', users)).join('')
+    : '<div class="empty"><div class="empty-icon">🤝</div><div class="empty-title">还没有接取过任务</div></div>';
 }
 
-function renderTaskCard(t, role) {
-  const posterName = (allUsers[t.posterId] || {}).name || '未知';
-  const accepterName = (allUsers[t.accepterId] || {}).name || '';
-  const accepterPhone = (allUsers[t.accepterId] || {}).phone || '';
+function renderTaskCard(t, role, users) {
+  const poster = users[t.posterId] || {};
+  const accepter = users[t.accepterId] || {};
   const platCls = t.platform === 'eleme' ? 'tag-eleme' : 'tag-meituan';
-  const platLabel = t.platform === 'eleme' ? '饿了么' : '美团';
-
-  let statusHtml = '';
-  if (t.status === 'open') statusHtml = '<span class="status-chip status-open">待接单</span>';
-  else if (t.status === 'accepted') statusHtml = '<span class="status-chip status-progress">进行中</span>';
-  else statusHtml = '<span class="status-chip status-done">已完成</span>';
+  let stHtml = '';
+  if (t.status === 'open') stHtml = '<span class="status-chip status-open">待接单</span>';
+  else if (t.status === 'accepted') stHtml = '<span class="status-chip status-progress">进行中</span>';
+  else stHtml = '<span class="status-chip status-done">已完成</span>';
 
   let actions = '';
   if (role === 'posted' && t.status === 'open') actions = `<button class="action-btn action-cancel" onclick="cancelTask('${t.id}')">取消</button>`;
@@ -836,57 +657,45 @@ function renderTaskCard(t, role) {
 
   return `<div class="task-card">
     <div class="task-top">
-      <span class="platform-tag ${platCls}">${t.platform==='eleme'?'🔵':'🟠'} ${platLabel}</span>
-      ${statusHtml}
+      <span class="platform-tag ${platCls}">${t.platform==='eleme'?'🔵':'🟠'} ${t.platform==='eleme'?'饿了么':'美团'}</span>
+      ${stHtml}
       <span class="reward-badge">🪙 ${t.rewardPoints}</span>
     </div>
     <div class="task-detail">
       <span class="task-label">柜箱号</span><span class="task-value">${esc(t.lockerNumber)}</span>
       <span class="task-label">取件码</span><span class="task-value">${esc(t.pickupCode)}</span>
       <span class="task-label">手机号</span><span class="task-value">${esc(t.phone)}</span>
-      ${role==='posted'&&t.accepterId?`<span class="task-label">接单人</span><span class="task-value">${esc(accepterName)} (${esc(accepterPhone)})</span>`:''}
-      ${role==='accepted'?`<span class="task-label">发布人</span><span class="task-value">${esc(posterName)} (${esc(t.phone)})</span>`:''}
+      ${role==='posted'&&t.accepterId?`<span class="task-label">接单人</span><span class="task-value">${esc(accepter.name||'')}</span>`:''}
+      ${role==='accepted'?`<span class="task-label">发布人</span><span class="task-value">${esc(poster.name||'')} (${esc(t.phone)})</span>`:''}
     </div>
-    <div class="task-bottom">
-      <span class="task-time">${ago(t.createdAt)}</span>
-      <div>${actions}</div>
-    </div></div>`;
+    <div class="task-bottom"><span class="task-time">${ago(t.createdAt)}</span><div>${actions}</div></div></div>`;
 }
 
 // ========== PROFILE ==========
-async function renderProfile() {
+function renderProfile() {
   if (!currentUserId) return;
-  try {
-    const snap = await db.ref('users/' + currentUserId).once('value');
-    const u = snap.val();
-    if (!u) return;
+  const u = (dataStore.users || {})[currentUserId];
+  if (!u) return;
+  const tasks = Object.values(dataStore.tasks || {});
+  const pCount = tasks.filter(t => t.posterId === currentUserId && t.status !== 'cancelled').length;
+  const aCount = tasks.filter(t => t.accepterId === currentUserId).length;
+  const cCount = tasks.filter(t => t.accepterId === currentUserId && t.status === 'completed').length;
 
-    const tasksSnap = await db.ref('tasks').once('value');
-    const tasks = tasksSnap.val();
-    const list = tasks ? Object.values(tasks) : [];
-    const pCount = list.filter(t => t.posterId === currentUserId && t.status !== 'cancelled').length;
-    const aCount = list.filter(t => t.accepterId === currentUserId).length;
-    const cCount = list.filter(t => t.accepterId === currentUserId && t.status === 'completed').length;
-
-    document.getElementById('profileContent').innerHTML = `
-      <div class="profile-card">
-        <div class="avatar">${esc(u.name.charAt(0))}</div>
-        <div class="profile-name">${esc(u.name)}</div>
-        <div class="profile-phone">${u.phone}</div>
-        <div class="points-box">🪙 ${u.points} 积分</div>
-        <div class="stats">
-          <div class="stat"><div class="stat-num">${pCount}</div><div class="stat-label">发布任务</div></div>
-          <div class="stat"><div class="stat-num">${aCount}</div><div class="stat-label">接取任务</div></div>
-          <div class="stat"><div class="stat-num">${cCount}</div><div class="stat-label">已完成</div></div>
-        </div>
+  document.getElementById('profileContent').innerHTML = `
+    <div class="profile-card">
+      <div class="avatar">${esc(u.name.charAt(0))}</div>
+      <div class="profile-name">${esc(u.name)}</div>
+      <div class="profile-phone">${u.phone}</div>
+      <div class="points-box">🪙 ${u.points} 积分</div>
+      <div class="stats">
+        <div class="stat"><div class="stat-num">${pCount}</div><div class="stat-label">发布任务</div></div>
+        <div class="stat"><div class="stat-num">${aCount}</div><div class="stat-label">接取任务</div></div>
+        <div class="stat"><div class="stat-num">${cCount}</div><div class="stat-label">已完成</div></div>
       </div>
-      <button class="btn btn-secondary" style="margin-bottom:10px;" onclick="toggleShareGuide()">📤 怎么分享给同事</button>
-      <button class="btn btn-secondary" style="margin-bottom:10px;" onclick="handleLogout()">切换账号</button>`;
-
-    renderShareGuide();
-  } catch(e) {
-    document.getElementById('profileContent').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-title">加载失败</div></div>';
-  }
+    </div>
+    <button class="btn btn-secondary" style="margin-bottom:10px;" onclick="toggleShareGuide()">📤 怎么分享给同事</button>
+    <button class="btn btn-secondary" style="margin-bottom:10px;" onclick="handleLogout()">切换账号</button>`;
+  renderShareGuide();
 }
 
 function toggleShareGuide() {
@@ -894,47 +703,20 @@ function toggleShareGuide() {
   if (page !== 'profile') go('profile');
   renderShareGuide();
 }
-
 function renderShareGuide() {
   const el = document.getElementById('shareGuide');
   if (!showingGuide) { el.classList.add('hidden'); return; }
   el.classList.remove('hidden');
-  const url = location.href;
-  el.innerHTML = `
-    <div style="background:#fff;border-radius:16px;padding:20px;margin-bottom:16px;">
-      <h3 style="font-size:17px;font-weight:700;margin-bottom:6px;">📤 分享给同事</h3>
-      <p style="font-size:13px;color:#8e8e93;margin-bottom:16px;">同事用手机浏览器打开链接就能用</p>
-      <div class="guide-steps">
-        <div class="guide-step"><div class="guide-num">1</div><div class="guide-text">复制链接发到公司群</div></div>
-        <div style="background:#f9f9f9;border-radius:10px;padding:12px 14px;word-break:break-all;font-size:13px;color:#007aff;cursor:pointer;" onclick="copyLink()">${esc(url)}</div>
-        <div class="guide-step"><div class="guide-num">2</div><div class="guide-text">同事打开后添加到桌面<small>iOS Safari：分享→添加到主屏幕<br>Android Chrome：菜单→添加到主屏幕</small></div></div>
-      </div>
-      <button class="btn btn-primary" style="margin-top:12px;" onclick="copyLink()">📋 复制链接</button>
-      <p style="text-align:center;font-size:11px;color:#c7c7cc;margin-top:8px;" id="copyStatus"></p>
-    </div>`;
+  el.innerHTML = `<div style="background:#fff;border-radius:16px;padding:20px;"><h3 style="font-size:17px;font-weight:700;margin-bottom:6px;">📤 分享给同事</h3><p style="font-size:13px;color:#8e8e93;margin-bottom:16px;">把链接发到公司群即可，多人数据自动同步</p><div class="guide-steps"><div class="guide-step"><div class="guide-num">1</div><div class="guide-text">复制链接发到公司群</div></div><div style="background:#f9f9f9;border-radius:10px;padding:12px 14px;word-break:break-all;font-size:13px;color:#007aff;cursor:pointer;" onclick="copyLink()">${esc(location.href)}</div><div class="guide-step"><div class="guide-num">2</div><div class="guide-text">同事打开后添加到桌面</div></div></div><button class="btn btn-primary" style="margin-top:12px;" onclick="copyLink()">📋 复制链接</button></div>`;
 }
-
-function copyLink() {
-  const url = location.href;
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(url).then(() => {
-      document.getElementById('copyStatus').textContent = '✅ 已复制！';
-      toast('链接已复制');
-    }).catch(() => { document.getElementById('copyStatus').textContent = '请手动复制'; });
-  } else {
-    document.getElementById('copyStatus').textContent = '请手动复制上方链接';
-  }
-}
+function copyLink() { navigator.clipboard ? navigator.clipboard.writeText(location.href).then(() => toast('已复制')) : toast('请手动复制'); }
 
 function handleLogout() {
-  modal('切换账号', '确认退出？数据保留在云端。',
+  modal('切换账号', '确认退出？',
     [{ text:'取消', cls:'btn-secondary', fn:()=>{} },
-     { text:'确认退出', cls:'btn-primary', fn: async () => {
-       localStorage.removeItem('dqw_uid');
-       currentUserId = null; currentUser = null;
-       if (taskListener) db.ref('tasks').off('value', taskListener);
-       if (userListener) db.ref('users/' + currentUserId).off('value', userListener);
-       await auth.signOut();
+     { text:'确认退出', cls:'btn-primary', fn:()=>{
+       localStorage.removeItem('dqw_uid'); currentUserId = null;
+       if (pollTimer) clearInterval(pollTimer);
        document.getElementById('tabBar').classList.add('hidden');
        document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
        document.getElementById('loginPage').classList.add('active');
@@ -950,47 +732,32 @@ function toggleNotifPanel() {
   if (document.getElementById('notifSheet').classList.contains('open')) renderNotifs();
 }
 
-async function renderNotifs() {
+function renderNotifs() {
   const list = document.getElementById('notifList');
   if (!currentUserId) { list.innerHTML = '<div class="empty"><div class="empty-icon">🔔</div><div class="empty-title">请先登录</div></div>'; return; }
 
-  try {
-    const snap = await db.ref('notifications').orderByChild('userId').equalTo(currentUserId).once('value');
-    const notifs = snap.val();
-    const arr = notifs ? Object.values(notifs).sort((a,b) => b.createdAt - a.createdAt) : [];
+  const notifs = Object.values(dataStore.notifs || {})
+    .filter(n => n.userId === currentUserId)
+    .sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
 
-    if (!arr.length) { list.innerHTML = '<div class="empty"><div class="empty-icon">📭</div><div class="empty-title">暂无消息</div></div>'; return; }
+  if (!notifs.length) { list.innerHTML = '<div class="empty"><div class="empty-icon">📭</div><div class="empty-title">暂无消息</div></div>'; return; }
 
-    // Mark all read
-    Object.entries(notifs).forEach(([key, n]) => { if (!n.read) db.ref('notifications/' + key).update({ read: true }); });
+  // Mark read
+  Object.entries(dataStore.notifs || {}).forEach(([k,n]) => {
+    if (n.userId === currentUserId && !n.read) { n.read = true; }
+  });
+  saveData();
 
-    list.innerHTML = arr.map(n => `
-      <div class="notif-row">
-        <div class="notif-dot seen"></div>
-        <div><div class="notif-body">${n.message}</div><div class="notif-date">${ago(n.createdAt)}</div></div>
-      </div>`).join('');
-  } catch(e) {
-    list.innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-title">加载失败</div></div>';
-  }
+  list.innerHTML = notifs.map(n => `
+    <div class="notif-row"><div class="notif-dot seen"></div><div><div class="notif-body">${n.message}</div><div class="notif-date">${ago(n.createdAt)}</div></div></div>`).join('');
 }
 
 function updateBadge() {
+  if (!currentUserId) { document.getElementById('notifBadge').classList.add('hidden'); return; }
+  const count = Object.values(dataStore.notifs || {}).filter(n => n.userId === currentUserId && !n.read).length;
   const badge = document.getElementById('notifBadge');
-  if (unreadNotifs.length > 0) {
-    badge.textContent = unreadNotifs.length > 99 ? '99+' : unreadNotifs.length;
-    badge.classList.remove('hidden');
-  } else {
-    badge.classList.add('hidden');
-  }
-}
-
-// ========== LOAD ALL USERS CACHE ==========
-db.ref('users').on('value', snap => {
-  allUsers = snap.val() || {};
-});
-
-// ========== INIT ==========
-setConnStatus('connecting');
+  if (count > 0) { badge.textContent = count > 99 ? '99+' : count; badge.classList.remove('hidden'); }
+  else badge.classList.add('hidden'); }
 </script>
 </body>
 </html>
