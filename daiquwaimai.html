@@ -485,22 +485,13 @@ body {
 
 <script>
 // ==================== STORE ====================
-const KEY = 'dqw_store_v2';
+const KEY = 'dqw_store_v3';
 let app = (() => {
   try { const r = localStorage.getItem(KEY); if (r) return JSON.parse(r); } catch(e) {}
   return { users:[], tasks:[], notifs:[], uid:null, shareTipHidden:false };
 })();
 
-// Seed demo
-if (!app._init) {
-  const d = { id:'u_demo', name:'张三', phone:'13800138000', points:25, at:Date.now()-86400000*3 };
-  app.users.push(d);
-  app.tasks.push(
-    { id:'t1', pid:'u_demo', plat:'eleme', locker:'E-12', code:'3847', phone:'13800138000', pts:3, status:'open', aid:null, at:Date.now()-7200000, done:null },
-    { id:'t2', pid:'u_demo', plat:'meituan', locker:'M-08', code:'7291', phone:'13800138000', pts:5, status:'open', aid:null, at:Date.now()-3600000, done:null }
-  );
-  app._init = true; save();
-}
+// No demo data — clean start
 
 function save() { localStorage.setItem(KEY, JSON.stringify(app)); }
 
